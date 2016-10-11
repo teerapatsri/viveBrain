@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/VRtutorial.unity
+  isLoaded: 1
+  isActive: 1
