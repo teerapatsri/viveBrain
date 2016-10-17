@@ -9,6 +9,8 @@ public class WandController : MonoBehaviour {
 	private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input ((int)trackedObj.index); } }
 	private SteamVR_TrackedObject trackedObj;
 
+    public WandController otherWand;
+    public bool trigger;
     public Interactable item;
 	//HashSet<Interactable> objectHoveringOver = new HashSet<Interactable>();
 	//private Interactable closestItem;
@@ -16,6 +18,7 @@ public class WandController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		trackedObj = GetComponent<SteamVR_TrackedObject>();
+        trigger = false;
 	}
 	
 	// Update is called once per frame
@@ -26,11 +29,21 @@ public class WandController : MonoBehaviour {
 		}
         if (controller.GetPressDown(triggerButton))
         {
+            trigger = true;
             item.BeginTrigger(this);
+            if (otherWand.trigger) //both triggered
+            {
+                item.BeginZoom();
+            }
         }
         if (controller.GetPressUp(triggerButton))
         {
+            trigger = false;
             item.EndTrigger(this);
+            if (otherWand.trigger) //both triggered
+            {
+                item.EndZoom();
+            }
         }
             if (controller.GetPressDown (gripButton)) {
             item.BeginGrab(this);
