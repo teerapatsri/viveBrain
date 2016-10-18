@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/VRtutorial.unity
+- path: C:/Users/ISL2_qwerty/Downloads/unity-ray-marching-volumetric-textures/unity-ray-marching-volumetric-textures/Assets/Scenes/scene.unity
   isLoaded: 1
   isActive: 1
