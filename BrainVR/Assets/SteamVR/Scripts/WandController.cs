@@ -5,16 +5,17 @@ using System.Collections.Generic;
 public class WandController : MonoBehaviour {
 	private Valve.VR.EVRButtonId gripButton = Valve.VR.EVRButtonId.k_EButton_Grip;
 	private Valve.VR.EVRButtonId triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger;
-    private Valve.VR.EVRButtonId downButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad;
+    private Valve.VR.EVRButtonId menuButton = Valve.VR.EVRButtonId.k_EButton_ApplicationMenu;
+    private Valve.VR.EVRButtonId padButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad;
 
-	private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input ((int)trackedObj.index); } }
+    private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input ((int)trackedObj.index); } }
 	private SteamVR_TrackedObject trackedObj;
 
     public WandController otherWand;
     public bool trigger;
-    public bool selectObj;
-    public Interactable item;
-    public ClippingPlaneController plane;
+    public bool controllingPlane;
+    public Interactable interactableController;
+    public ClippingPlaneController planeController;
 	//HashSet<Interactable> objectHoveringOver = new HashSet<Interactable>();
 	//private Interactable closestItem;
 	//private Interactable interactingItem;
@@ -22,7 +23,7 @@ public class WandController : MonoBehaviour {
 	void Start () {
 		trackedObj = GetComponent<SteamVR_TrackedObject>();
         trigger = false;
-        selectObj = false;
+        controllingPlane = false;
 
     }
 	
@@ -32,51 +33,57 @@ public class WandController : MonoBehaviour {
 			Debug.Log ("Controller not initialized");
 			return;
 		}
-        if (controller.GetPressDown(downButton))
+        if (controller.GetPressDown(menuButton))
         {
-                selectObj = !selectObj;
-                otherWand.selectObj = selectObj;
+                controllingPlane = !controllingPlane;
+                otherWand.controllingPlane = controllingPlane;
         }
-        if (controller.GetPressUp(downButton))
+        if (controller.GetPressUp(menuButton))
         {
         }
         if (controller.GetPressDown(triggerButton))
         {
-            if (selectObj) {
-                plane.BeginRotatePlane(this);
+            if (controllingPlane) {//Clipping mode
+                trigger = true;
+                planeController.BeginRotatePlane(this);
+                if (otherWand.trigger)
+                {
+                    planeController.ResetPosition();
+                }
             }
             else { 
                  trigger = true;
-                 item.BeginTrigger(this);
+                 interactableController.BeginTrigger(this);
                  if (otherWand.trigger) //both triggered
                  {
-                     item.BeginZoom();
+                     interactableController.BeginZoom();
                  }
             }
         }
         if (controller.GetPressUp(triggerButton))
         {
-            plane.EndRotatePlane(this);
+            planeController.EndRotatePlane(this);
             trigger = false;
-            item.EndTrigger(this);
+            interactableController.EndTrigger(this);
             if (otherWand.trigger) //both triggered
             {
-                item.EndZoom();
+                interactableController.EndZoom();
+                planeController.BeginRotatePlane(otherWand);
             }
         }
         if (controller.GetPressDown (gripButton)) {
-            if (selectObj)
+            if (controllingPlane)//Clipping mode
             {
-                plane.BeginMovePlane(this);
+                planeController.BeginMovePlane(this);
             }
             else
             {
-                item.BeginGrab(this);
+                interactableController.BeginGrab(this);
             }
         }
-        if (controller.GetPressUp (gripButton)&& item!=null /*&&interactingItem!=null*/) {
-            plane.EndMovePlane(this);
-            item.EndGrab(this);
+        if (controller.GetPressUp (gripButton)&& interactableController!=null /*&&interactingItem!=null*/) {
+            planeController.EndMovePlane(this);
+            interactableController.EndGrab(this);
 	    }
 	}
 

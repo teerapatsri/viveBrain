@@ -6,7 +6,7 @@ public class ClippingPlaneController : MonoBehaviour
     private new Rigidbody rigidbody;
     private bool currentlyMovingPlane;
     private bool currentlyRotatingPlane;
-    private WandController attachedWand;
+    private WandController wand1, wand2;
     private Transform interactionPoint;
     private Vector3 posDelta, axis, localPos;
     private Quaternion rotationDelta;
@@ -29,18 +29,17 @@ public class ClippingPlaneController : MonoBehaviour
     {
         transform.localPosition = localPos;
         //case grab = move object around
-        if (attachedWand != null && currentlyMovingPlane)
+        if (wand1 != null && currentlyMovingPlane)
         {
-            posDelta = attachedWand.transform.position - interactionPoint.position; //position changed
-            Vector3 normal = transform.rotation * Vector3.up;
-            posDelta = Vector3.Project(posDelta, normal);
+            posDelta = wand1.transform.position - interactionPoint.position; //position changed
+            Vector3 normal = transform.rotation * Vector3.up;//get sliding axis
+            posDelta = Vector3.Project(posDelta, normal);//move only along axis
             localPos += posDelta;
         }
         //case single trigger = rotate object
-        if (attachedWand != null && currentlyRotatingPlane)
+        if (wand1 != null && currentlyRotatingPlane)
         {
-            localPos = new Vector3(0, -0.2f, 0); //reset position to cube center
-            rotationDelta = attachedWand.transform.rotation * Quaternion.Inverse(interactionPoint.rotation);
+            rotationDelta = wand1.transform.rotation * Quaternion.Inverse(interactionPoint.rotation);
             rotationDelta.ToAngleAxis(out angle, out axis);
 
             if (angle > 180)
@@ -52,34 +51,40 @@ public class ClippingPlaneController : MonoBehaviour
     }
     public void BeginMovePlane(WandController wand)
     {
-        attachedWand = wand;
+        wand1 = wand;
         interactionPoint.position = wand.transform.position;
         interactionPoint.rotation = wand.transform.rotation;
-        interactionPoint.SetParent(transform, true);
         currentlyMovingPlane = true;
+        currentlyRotatingPlane = false;
     }
     public void EndMovePlane(WandController wand)
     {
-        if (wand == attachedWand)
+        if (wand == wand1)
         {
-            attachedWand = null;
+            wand1 = null;
             currentlyMovingPlane = false;
         }
     }
     public void BeginRotatePlane(WandController wand)
     {
-        attachedWand = wand;
+        wand1 = wand;
         interactionPoint.position = wand.transform.position;
         interactionPoint.rotation = wand.transform.rotation;
         interactionPoint.SetParent(transform, true);
         currentlyRotatingPlane = true;
+        currentlyMovingPlane = false;
     }
     public void EndRotatePlane(WandController wand)
     {
-        if (wand == attachedWand)
+        if (wand == wand1)
         {
-            attachedWand = null;
+            wand1 = null;
             currentlyRotatingPlane = false;
         }
+    }
+    public void ResetPosition()
+    {
+        localPos = new Vector3(0, -0.2f, 0); //reset position to cube center
+        currentlyRotatingPlane = false;
     }
 }

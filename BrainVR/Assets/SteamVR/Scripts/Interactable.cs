@@ -6,12 +6,11 @@ public class Interactable : MonoBehaviour {
     public Rigidbody rbPlane;
     public WandController wand1;
     public WandController wand2;
-    private bool currentlyGrabbing;
-    private bool currentlyTrigger;
+    private bool currentlyGrabbing, currentlyTrigger, currentlyZooming;
     private WandController attachedWand;
 	private Transform interactionPoint;
 	private Vector3 posDeltaG, posDeltaT, axis;
-	private Quaternion preRotation, rotationDelta;
+	private Quaternion wandPreRotation, preRotation, rotationDelta;
     private float startDistance;
     private float distance;
 	private float angle;
@@ -40,9 +39,10 @@ public class Interactable : MonoBehaviour {
             rigidbody.velocity = posDeltaG * velocityFactor * Time.deltaTime;
         }
         //case single trigger = rotate object
-        if (attachedWand != null && currentlyTrigger && ((wand1.trigger && wand2.trigger) == false)) //if both triggered go to case 3
+        if (attachedWand != null && currentlyTrigger && !currentlyZooming) //if both triggered go to case 3
         {
             rotationDelta = Quaternion.LookRotation(attachedWand.transform.position - transform.position) * Quaternion.Inverse(preRotation);
+            rotationDelta *= Quaternion.Inverse(attachedWand.transform.rotation * Quaternion.Inverse(wandPreRotation));
             //rotationDelta *= rotationDelta;
             rotationDelta.x = 0;
             rotationDelta.z = 0;
@@ -51,19 +51,20 @@ public class Interactable : MonoBehaviour {
             rbPlane.angularVelocity = (Time.deltaTime * angle * axis) * rotationFactor;
             if (rigidbody.angularVelocity.sqrMagnitude >= 0)
             {
-                int index = 3;
+                int index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestLeft);
                 if (wand2.trigger)
                 {
-                    index = 4;
+                    index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestRight);
                 }
-                SteamVR_Controller.Input(index).TriggerHapticPulse((ushort)Mathf.Lerp(0, 3999, rigidbody.angularVelocity.sqrMagnitude/30));
+                SteamVR_Controller.Input(index).TriggerHapticPulse((ushort)Mathf.Lerp(0, 1000, rigidbody.angularVelocity.sqrMagnitude/50));
 
             }
             //transform.rotation = Quaternion.Slerp(transform.rotation, transform.rotation * rotationDelta, rotationFactor * Time.deltaTime);
             preRotation = Quaternion.LookRotation(attachedWand.transform.position - transform.position);
+            wandPreRotation = attachedWand.transform.rotation;
         }
         //case double trigger = ZOOM (Scale) object
-        if (wand1 != null && wand2 != null && wand1.trigger && wand2.trigger)
+        if (wand1 != null && wand2 != null && currentlyZooming)
         {
            distance = Vector3.Distance(wand1.transform.position, wand2.transform.position); //distance between wands
            change = distance - startDistance;   //difference of default and current distance
@@ -82,6 +83,8 @@ public void BeginGrab(WandController wand){
 		interactionPoint.SetParent (transform, true);
 
 		currentlyGrabbing = true;
+        currentlyTrigger = false;
+        currentlyZooming = false;
 	}
 	public void EndGrab(WandController wand){
 		if (wand == attachedWand) {
@@ -94,6 +97,8 @@ public void BeginGrab(WandController wand){
         attachedWand = wand;
         preRotation = Quaternion.LookRotation(attachedWand.transform.position - transform.position);
         currentlyTrigger = true;
+        currentlyGrabbing = false;
+        currentlyZooming = false;
     }
     public void EndTrigger(WandController wand)
     {
@@ -106,11 +111,14 @@ public void BeginGrab(WandController wand){
     public void BeginZoom()
     {
         startDistance = Vector3.Distance(wand1.transform.position, wand2.transform.position);
+        currentlyZooming = true;
+        currentlyGrabbing = false;
         currentlyTrigger = false; //to ensure getting out of rotating mode
     }
     public void EndZoom()
     {
         preScale = transform.localScale; //redefine defaultScale
+        currentlyZooming = false;
         currentlyTrigger = true;
     }
     public bool IsGrabbing(){
