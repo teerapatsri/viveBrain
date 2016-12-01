@@ -3,88 +3,117 @@ using System.Collections;
 
 public class ClippingPlaneController : MonoBehaviour
 {
+    public Transform cube;
+
     private new Rigidbody rigidbody;
     private bool currentlyMovingPlane;
-    private bool currentlyRotatingPlane;
-    private WandController wand1, wand2;
-    private Transform interactionPoint;
-    private Vector3 posDelta, axis, localPos;
-    private Quaternion rotationDelta;
-    private float angle;
+
+    private WandController attachedWand;
+    private Transform prePos;
+    private Vector3 posDelta;
+
     private float rotationFactor = 400f;
     private float velocityFactor = 20000f;
+    private string anatomicalPlane;
     // Use this for initialization
     void Start()
     {
-        localPos = new Vector3(0, -0.2f, 0);
         rigidbody = GetComponent<Rigidbody>();
-        interactionPoint = new GameObject().transform;
+        prePos = new GameObject().transform;
         velocityFactor /= rigidbody.mass; //mass makes object go slower
         rotationFactor /= rigidbody.mass;  // and harder to rotate?
+        anatomicalPlane = "Axial";
     }
 
     //rotation example
     // Update is called once per frame
     void Update()
     {
-        transform.localPosition = localPos;
-        //case grab = move object around
-        if (wand1 != null && currentlyMovingPlane)
+        if (cube != null)
         {
-            posDelta = wand1.transform.position - interactionPoint.position; //position changed
-            Vector3 normal = transform.rotation * Vector3.up;//get sliding axis
-            posDelta = Vector3.Project(posDelta, normal);//move only along axis
-            localPos += posDelta;
-        }
-        //case single trigger = rotate object
-        if (wand1 != null && currentlyRotatingPlane)
-        {
-            rotationDelta = wand1.transform.rotation * Quaternion.Inverse(interactionPoint.rotation);
-            rotationDelta.ToAngleAxis(out angle, out axis);
-
-            if (angle > 180)
+            if (attachedWand != null && currentlyMovingPlane)
             {
-                angle -= 360;
+                posDelta = attachedWand.transform.position - prePos.position; //position changed
+                Vector3 normal = Vector3.forward;//get sliding axis
+                switch (anatomicalPlane)
+                {
+                    case ("Axial"):
+                        {
+                            posDelta.x = 0;
+                            posDelta.z = 0;
+                            break;
+                        }
+                    case ("Coronal"):
+                        {
+                            posDelta.y = 0;
+                            normal = cube.rotation * normal;
+                            posDelta = Vector3.Project(posDelta, normal);
+                            break;
+                        }
+                    case ("Sagittal"):
+                        {
+                            posDelta.y = 0;
+                            normal = cube.rotation * normal;
+                            posDelta = Vector3.ProjectOnPlane(posDelta, normal);
+                            break;
+                        }
+                }
+                transform.position += posDelta;
+                prePos.position = attachedWand.transform.position;
             }
-            rigidbody.angularVelocity = (Time.fixedDeltaTime * angle * axis) * rotationFactor;
         }
     }
     public void BeginMovePlane(WandController wand)
     {
-        wand1 = wand;
-        interactionPoint.position = wand.transform.position;
-        interactionPoint.rotation = wand.transform.rotation;
+        attachedWand = wand;
+        prePos.position = wand.transform.position;
+        prePos.rotation = wand.transform.rotation;
         currentlyMovingPlane = true;
-        currentlyRotatingPlane = false;
     }
     public void EndMovePlane(WandController wand)
     {
-        if (wand == wand1)
+        if (wand == attachedWand)
         {
-            wand1 = null;
+            attachedWand = null;
             currentlyMovingPlane = false;
         }
     }
-    public void BeginRotatePlane(WandController wand)
+    public void RotatePlane()
     {
-        wand1 = wand;
-        interactionPoint.position = wand.transform.position;
-        interactionPoint.rotation = wand.transform.rotation;
-        interactionPoint.SetParent(transform, true);
-        currentlyRotatingPlane = true;
+        if (cube != null)
+        {
+            transform.position = cube.position;
+        }
+        switch (anatomicalPlane)
+        {
+            case ("Axial"):
+                {
+                    anatomicalPlane = "Coronal";
+                    transform.localRotation = Quaternion.Euler(90, 0, 0);
+                    break;
+                }
+            case ("Coronal"):
+                {
+                    anatomicalPlane = "Sagittal";
+                    transform.localRotation = Quaternion.Euler(90, 90, 0);
+                    break;
+                }
+            case ("Sagittal"):
+                {
+                    anatomicalPlane = "Axial";
+                    transform.localRotation = Quaternion.Euler(180, 0, 0);
+                    break;
+                }
+
+        }
         currentlyMovingPlane = false;
     }
-    public void EndRotatePlane(WandController wand)
+    public string CurrentAxis()
     {
-        if (wand == wand1)
-        {
-            wand1 = null;
-            currentlyRotatingPlane = false;
-        }
+        return anatomicalPlane;
     }
-    public void ResetPosition()
+    public bool IsMovingPlane()
     {
-        localPos = new Vector3(0, -0.2f, 0); //reset position to cube center
-        currentlyRotatingPlane = false;
+        return currentlyMovingPlane;
     }
 }

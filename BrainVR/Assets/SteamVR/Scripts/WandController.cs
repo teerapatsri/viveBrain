@@ -10,21 +10,28 @@ public class WandController : MonoBehaviour {
 
     private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input ((int)trackedObj.index); } }
 	private SteamVR_TrackedObject trackedObj;
-
+    [Header(" [Other object references]")]
+    [Tooltip("The Other Wand")]
     public WandController otherWand;
-    public bool trigger;
-    public bool controllingPlane;
+    [Tooltip("Interactable Object")]
     public Interactable interactableController;
+    [Tooltip("Clipping Plane")]
     public ClippingPlaneController planeController;
-	//HashSet<Interactable> objectHoveringOver = new HashSet<Interactable>();
-	//private Interactable closestItem;
-	//private Interactable interactingItem;
-	// Use this for initialization
-	void Start () {
+
+    private bool gripEnabled, trigEnabled, menuEnabled;
+    private bool trigger;
+    private bool grip;
+    private bool controllingPlane;
+    void Start () {
 		trackedObj = GetComponent<SteamVR_TrackedObject>();
+
         trigger = false;
         controllingPlane = false;
+        grip = false;
 
+        gripEnabled = true;
+        trigEnabled = true;
+        menuEnabled = true;
     }
 	
 	// Update is called once per frame
@@ -33,71 +40,101 @@ public class WandController : MonoBehaviour {
 			Debug.Log ("Controller not initialized");
 			return;
 		}
-        if (controller.GetPressDown(menuButton))
+        if (controller.GetPressDown(menuButton)&&menuEnabled)
         {
-                controllingPlane = !controllingPlane;
-                otherWand.controllingPlane = controllingPlane;
+            changeMode();
+            otherWand.changeMode();
         }
         if (controller.GetPressUp(menuButton))
         {
         }
-        if (controller.GetPressDown(triggerButton))
+        if (controller.GetPressDown(triggerButton)&&trigEnabled)
         {
-            if (controllingPlane) {//Clipping mode
+            if (IsControllingPlane()) {//PLANE mode
                 trigger = true;
-                planeController.BeginRotatePlane(this);
+                planeController.RotatePlane();
                 if (otherWand.trigger)
                 {
-                    planeController.ResetPosition();
+                    //PlaneMODE DOUBLE TRIGGER
                 }
             }
-            else { 
+            else {//NORMAL mode
                  trigger = true;
                  interactableController.BeginTrigger(this);
-                 if (otherWand.trigger) //both triggered
-                 {
+                 if (otherWand.trigger) //Free Mode Double TRIGGER
+                {
                      interactableController.BeginZoom();
                  }
             }
         }
         if (controller.GetPressUp(triggerButton))
         {
-            planeController.EndRotatePlane(this);
+            //planeController.EndRotatePlane(this);
             trigger = false;
             interactableController.EndTrigger(this);
-            if (otherWand.trigger) //both triggered
+            if (otherWand.trigger) //Free Mode Double TRIGGER
             {
                 interactableController.EndZoom();
-                planeController.BeginRotatePlane(otherWand);
+                //planeController.BeginRotatePlane(otherWand);
             }
         }
-        if (controller.GetPressDown (gripButton)) {
-            if (controllingPlane)//Clipping mode
+        if (controller.GetPressDown (gripButton)&&gripEnabled) {
+            if (controllingPlane)//Plane mode
             {
+                grip = false;
                 planeController.BeginMovePlane(this);
             }
-            else
+            else //NORMAL mode
             {
+                grip = true;
+                otherWand.grip = false;
                 interactableController.BeginGrab(this);
             }
         }
-        if (controller.GetPressUp (gripButton)&& interactableController!=null /*&&interactingItem!=null*/) {
+        if (controller.GetPressUp (gripButton)) {
             planeController.EndMovePlane(this);
             interactableController.EndGrab(this);
+            grip = false;
 	    }
 	}
-
-	private void OnTriggerEnter(Collider other)
+    public void GripEnable()
     {
-        Interactable collidedItem = other.GetComponent<Collider>().GetComponent<Interactable>();
-		if (collidedItem != null) {
-            //objectHoveringOver.Add (collidedItem);
-        }
-	}
-	private void OnTriggerExit(Collider other){
-        Interactable collidedItem = other.GetComponent<Collider>().GetComponent<Interactable> ();
-		if (collidedItem != null) {
-			//objectHoveringOver.Remove (collidedItem);
-        } 
-	}
+        gripEnabled = true;
+    }
+    public void GripDisable()
+    {
+        gripEnabled = false;
+    }
+    public void TrigEnable()
+    {
+        trigEnabled = true;
+    }
+    public void TrigDisable()
+    {
+        trigEnabled = false;
+    }
+    public void MenuEnable()
+    {
+        menuEnabled = true;
+    }
+    public void MenuDisable()
+    {
+        menuEnabled = false;
+    }
+    public bool IsGripping()
+    {
+        return grip;
+    }
+    public bool IsTriggering()
+    {
+        return trigger;
+    }
+    public void changeMode()
+    {
+        controllingPlane = !controllingPlane;
+    }
+    public bool IsControllingPlane()
+    {
+        return controllingPlane;
+    }
 }

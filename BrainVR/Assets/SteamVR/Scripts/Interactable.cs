@@ -2,26 +2,34 @@
 using System.Collections;
 
 public class Interactable : MonoBehaviour {
-	public new Rigidbody rigidbody;
+    [Header(" [Other object references]")]
+    [Tooltip("Left Wand")]
+    public WandController leftWand;
+    [Tooltip("Right Wand")]
+    public WandController rightWand;
+    [Header(" [Rigid Body]")]
+    public new Rigidbody rigidbody;
     public Rigidbody rbPlane;
-    public WandController wand1;
-    public WandController wand2;
-    private bool currentlyGrabbing, currentlyTrigger, currentlyZooming;
+
+    private bool currentlyMoving, currentlyRotating, currentlyZooming;
+
     private WandController attachedWand;
 	private Transform interactionPoint;
-	private Vector3 posDeltaG, posDeltaT, axis;
+	private Vector3 posDelta, axis;
 	private Quaternion wandPreRotation, preRotation, rotationDelta;
+
     private float startDistance;
     private float distance;
 	private float angle;
     private float change;
 	private float rotationFactor = 40000f;
     private float velocityFactor = 20000f;
-    private Vector3 defaultScale, preScale;
+    private Vector3 defaultScale, preScale, localPos;
     // Use this for initialization
     void Start () {
 		rigidbody = GetComponent<Rigidbody> ();
         defaultScale = transform.localScale;
+        localPos = rbPlane.transform.localPosition;
         preScale = defaultScale;
         preRotation = transform.rotation;
         interactionPoint = new GameObject ().transform;
@@ -34,16 +42,20 @@ public class Interactable : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         //case grab = move object around
-		if (attachedWand != null && currentlyGrabbing) {
-			posDeltaG = attachedWand.transform.position - interactionPoint.position; //position changed
-            rigidbody.velocity = posDeltaG * velocityFactor * Time.deltaTime;
+        if (rbPlane.angularVelocity.sqrMagnitude > 0.01)
+        {
+            rbPlane.transform.localPosition = localPos;
+        }
+        if (attachedWand != null && currentlyMoving) {
+            posDelta = attachedWand.transform.position - interactionPoint.position; //position changed
+            rigidbody.velocity = posDelta * velocityFactor * Time.deltaTime;
+            rbPlane.velocity = posDelta * velocityFactor * Time.deltaTime;
         }
         //case single trigger = rotate object
-        if (attachedWand != null && currentlyTrigger && !currentlyZooming) //if both triggered go to case 3
+        if (attachedWand != null && currentlyRotating)
         {
-            rotationDelta = Quaternion.LookRotation(attachedWand.transform.position - transform.position) * Quaternion.Inverse(preRotation);
-            rotationDelta *= Quaternion.Inverse(attachedWand.transform.rotation * Quaternion.Inverse(wandPreRotation));
-            //rotationDelta *= rotationDelta;
+            rotationDelta = Quaternion.LookRotation(attachedWand.transform.position - transform.position) * Quaternion.Inverse(preRotation); //WAND POSITION DELTA
+            rotationDelta *= Quaternion.Inverse(attachedWand.transform.rotation * Quaternion.Inverse(wandPreRotation));//PLUS WAND ROTATION DELTA
             rotationDelta.x = 0;
             rotationDelta.z = 0;
             rotationDelta.ToAngleAxis(out angle, out axis);
@@ -52,7 +64,7 @@ public class Interactable : MonoBehaviour {
             if (rigidbody.angularVelocity.sqrMagnitude >= 0)
             {
                 int index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestLeft);
-                if (wand2.trigger)
+                if (rightWand.IsTriggering())
                 {
                     index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestRight);
                 }
@@ -64,9 +76,9 @@ public class Interactable : MonoBehaviour {
             wandPreRotation = attachedWand.transform.rotation;
         }
         //case double trigger = ZOOM (Scale) object
-        if (wand1 != null && wand2 != null && currentlyZooming)
+        if (leftWand != null && rightWand != null && currentlyZooming)
         {
-           distance = Vector3.Distance(wand1.transform.position, wand2.transform.position); //distance between wands
+           distance = Vector3.Distance(leftWand.transform.position, rightWand.transform.position); //distance between wands
            change = distance - startDistance;   //difference of default and current distance
            transform.localScale = new Vector3(Mathf.Clamp(preScale.x * (1+change), defaultScale.x * 0.1f, defaultScale.x * 3f),
                                                 Mathf.Clamp(preScale.y * (1 + change), defaultScale.y * 0.1f, defaultScale.y * 3f),
@@ -82,22 +94,29 @@ public void BeginGrab(WandController wand){
 		interactionPoint.rotation = wand.transform.rotation;
 		interactionPoint.SetParent (transform, true);
 
-		currentlyGrabbing = true;
-        currentlyTrigger = false;
+		currentlyMoving = true;
+        currentlyRotating = false;
         currentlyZooming = false;
-	}
+        int index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestLeft);
+        if (rightWand.IsGripping())
+        {
+            index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestRight);
+        }
+        SteamVR_Controller.Input(index).TriggerHapticPulse(3000);
+    }
 	public void EndGrab(WandController wand){
 		if (wand == attachedWand) {
 			attachedWand = null;
-			currentlyGrabbing = false;
+			currentlyMoving = false;
 		}
 	}
     public void BeginTrigger(WandController wand)
     {
+        localPos = rbPlane.transform.localPosition;
         attachedWand = wand;
         preRotation = Quaternion.LookRotation(attachedWand.transform.position - transform.position);
-        currentlyTrigger = true;
-        currentlyGrabbing = false;
+        currentlyRotating = true;
+        currentlyMoving = false;
         currentlyZooming = false;
     }
     public void EndTrigger(WandController wand)
@@ -105,26 +124,30 @@ public void BeginGrab(WandController wand){
         if (wand == attachedWand)
         {
             attachedWand = null;
-            currentlyTrigger = false;
+            currentlyRotating = false;
         }
     }
     public void BeginZoom()
     {
-        startDistance = Vector3.Distance(wand1.transform.position, wand2.transform.position);
+        startDistance = Vector3.Distance(leftWand.transform.position, rightWand.transform.position);
         currentlyZooming = true;
-        currentlyGrabbing = false;
-        currentlyTrigger = false; //to ensure getting out of rotating mode
+        currentlyMoving = false;
+        currentlyRotating = false; //to ensure getting out of rotating mode
     }
     public void EndZoom()
     {
         preScale = transform.localScale; //redefine defaultScale
         currentlyZooming = false;
-        currentlyTrigger = true;
+        currentlyRotating = true;
     }
-    public bool IsGrabbing(){
-		return currentlyGrabbing;
+    public bool IsMoving(){
+		return currentlyMoving;
 	}
     public bool IsTriggering(){
-        return currentlyTrigger;
+        return currentlyRotating;
+    }
+    public bool IsZooming()
+    {
+        return currentlyZooming;
     }
 }
