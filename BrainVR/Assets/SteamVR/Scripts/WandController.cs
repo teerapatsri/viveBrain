@@ -2,14 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class WandController : MonoBehaviour {
-	private Valve.VR.EVRButtonId gripButton = Valve.VR.EVRButtonId.k_EButton_Grip;
-	private Valve.VR.EVRButtonId triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger;
+public class WandController : MonoBehaviour
+{
+    private Valve.VR.EVRButtonId gripButton = Valve.VR.EVRButtonId.k_EButton_Grip;
+    private Valve.VR.EVRButtonId triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger;
     private Valve.VR.EVRButtonId menuButton = Valve.VR.EVRButtonId.k_EButton_ApplicationMenu;
     private Valve.VR.EVRButtonId padButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad;
 
-    private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input ((int)trackedObj.index); } }
-	private SteamVR_TrackedObject trackedObj;
+    private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input((int)trackedObj.index); } }
+    private SteamVR_TrackedObject trackedObj;
     [Header(" [Other object references]")]
     [Tooltip("The Other Wand")]
     public WandController otherWand;
@@ -22,8 +23,9 @@ public class WandController : MonoBehaviour {
     private bool trigger;
     private bool grip;
     private bool controllingPlane;
-    void Start () {
-		trackedObj = GetComponent<SteamVR_TrackedObject>();
+    void Start()
+    {
+        trackedObj = GetComponent<SteamVR_TrackedObject>();
 
         trigger = false;
         controllingPlane = false;
@@ -33,14 +35,16 @@ public class WandController : MonoBehaviour {
         trigEnabled = true;
         menuEnabled = true;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		if(controller==null){
-			Debug.Log ("Controller not initialized");
-			return;
-		}
-        if (controller.GetPressDown(menuButton)&&menuEnabled)
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (controller == null)
+        {
+            Debug.Log("Controller not initialized");
+            return;
+        }
+        if (controller.GetPressDown(menuButton) && menuEnabled)
         {
             changeMode();
             otherWand.changeMode();
@@ -48,9 +52,10 @@ public class WandController : MonoBehaviour {
         if (controller.GetPressUp(menuButton))
         {
         }
-        if (controller.GetPressDown(triggerButton)&&trigEnabled)
+        if (controller.GetPressDown(triggerButton) && trigEnabled)
         {
-            if (IsControllingPlane()) {//PLANE mode
+            if (IsControllingPlane())
+            {//PLANE mode
                 trigger = true;
                 planeController.RotatePlane();
                 if (otherWand.trigger)
@@ -58,13 +63,14 @@ public class WandController : MonoBehaviour {
                     //PlaneMODE DOUBLE TRIGGER
                 }
             }
-            else {//NORMAL mode
-                 trigger = true;
-                 interactableController.BeginTrigger(this);
-                 if (otherWand.trigger) //Free Mode Double TRIGGER
+            else
+            {//NORMAL mode
+                trigger = true;
+                interactableController.BeginTrigger(this);
+                if (otherWand.trigger) //Free Mode Double TRIGGER
                 {
-                     interactableController.BeginZoom();
-                 }
+                    interactableController.BeginZoom();
+                }
             }
         }
         if (controller.GetPressUp(triggerButton))
@@ -78,7 +84,8 @@ public class WandController : MonoBehaviour {
                 //planeController.BeginRotatePlane(otherWand);
             }
         }
-        if (controller.GetPressDown (gripButton)&&gripEnabled) {
+        if (controller.GetPressDown(gripButton) && gripEnabled)
+        {
             if (controllingPlane)//Plane mode
             {
                 grip = false;
@@ -91,12 +98,30 @@ public class WandController : MonoBehaviour {
                 interactableController.BeginGrab(this);
             }
         }
-        if (controller.GetPressUp (gripButton)) {
+        if (controller.GetPressUp(gripButton))
+        {
             planeController.EndMovePlane(this);
             interactableController.EndGrab(this);
             grip = false;
-	    }
-	}
+        }
+        if (controller.GetPressDown(padButton))
+        {
+            GameObject cubeObj = GameObject.Find("Cube");
+            var renderStyle = cubeObj.GetComponent<CubeRenderStyleController>();
+
+            var v = controller.GetAxis(padButton);
+            Debug.Log(v.x + " " + v.y);
+            if (v.y < 0)
+            {
+                renderStyle.SetShaderNumber((renderStyle.ShaderNumber + 1) % 8);
+            }
+            else
+            {
+                renderStyle.SetTwoSideClipping(!renderStyle.IsTwoSideClipping);
+            }
+
+        }
+    }
     public void GripEnable()
     {
         gripEnabled = true;

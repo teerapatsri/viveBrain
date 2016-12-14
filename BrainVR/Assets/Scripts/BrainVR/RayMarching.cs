@@ -5,13 +5,13 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Camera))]
 public class RayMarching : MonoBehaviour
 {
-    [SerializeField]
-    [Header("Clipping Option")]
-    private bool twoSideClipping = false;
+    // [SerializeField]
+    // [Header("Clipping Option")]
+    // public bool twoSideClipping = false;
 
-    [SerializeField]
-    [Header("Shader")]
-    private int shaderNumber = 0;
+    // [SerializeField]
+    // [Header("Shader")]
+    // public int shaderNumber = 0;
 
     [SerializeField]
 	[Header("Render in a lower resolution to increase performance.")]
@@ -79,6 +79,8 @@ public class RayMarching : MonoBehaviour
 	
 	private void OnRenderImage(RenderTexture source, RenderTexture destination)
 	{
+        var renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
+
 		_rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
 
 		var width = source.width / downscale;
@@ -126,8 +128,8 @@ public class RayMarching : MonoBehaviour
 		{
 			_rayMarchMaterial.SetVector("_ClipPlane", Vector4.zero);
 		}
-        _rayMarchMaterial.SetInt("_ClippingOption", twoSideClipping == true ? 1 : 0); // Clipping Pane Option
-        _rayMarchMaterial.SetInt("_ShaderNumber", shaderNumber); // Shader Mode
+        _rayMarchMaterial.SetInt("_ClippingOption", renderStyle.IsTwoSideClipping ? 1 : 0); // Clipping Pane Option
+        _rayMarchMaterial.SetInt("_ShaderNumber", renderStyle.ShaderNumber); // Shader Mode
         _rayMarchMaterial.SetFloat("_Opacity", opacity); // Blending strength 
 		_rayMarchMaterial.SetVector("_ClipDims", clipDimensions / 100f); // Clip box
 

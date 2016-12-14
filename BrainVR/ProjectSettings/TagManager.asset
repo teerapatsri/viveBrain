@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - VREnvironment
+  - PlayerColor
   layers:
   - Default
   - TransparentFX

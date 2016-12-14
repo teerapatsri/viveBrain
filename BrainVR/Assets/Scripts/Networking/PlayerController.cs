@@ -12,6 +12,7 @@ public class PlayerController : NetworkBehaviour
     const float playerDisplayYOffset = 0.5f;
 
     public GameObject playerDisplay;
+    public GameObject playerColorObj;
     public GameObject firstPersonObj;
     public Camera playerCamera;
 
@@ -49,10 +50,10 @@ public class PlayerController : NetworkBehaviour
         GetStartCameraObject().SetActive(false);
 
         // Try to open in VR mode
-        /* if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
-        else CmdSetPlayerMode(PlayerMode.FirstPerson); */
+        if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
+        else CmdSetPlayerMode(PlayerMode.FirstPerson); 
 
-        CmdSetPlayerMode(PlayerMode.FirstPerson);
+        // CmdSetPlayerMode(PlayerMode.FirstPerson);
     }
 
     private static bool CanEnableVRMode()
@@ -257,12 +258,10 @@ public class PlayerController : NetworkBehaviour
         foreach (MeshRenderer renderer in playerDisplay.GetComponentsInChildren<MeshRenderer>())
         {
             renderer.enabled = isVisible;
-            if (isVisible)
-            {
-                renderer.material.SetColor("_EmissionColor", playerColor);
-                renderer.shadowCastingMode = shadowCastingMode;
-            }
+            if (isVisible) renderer.shadowCastingMode = shadowCastingMode;
         }
+
+        playerColorObj.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", playerColor);
     }
 
     private static AudioListener GetMainCameraAudioListener()
