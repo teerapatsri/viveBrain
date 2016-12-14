@@ -1,0 +1,207 @@
+Initialize engine version: 5.4.1f1 (649f48bbbf0f)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GTX 1080 (ID=0x1b80)
+    Vendor:   NVIDIA
+    VRAM:     8144 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+- Completed reload, in  0.155 seconds
+Platform assembly: C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\ISL2_qwerty\Desktop\Vive\BrainVR\BrainVR_Data\Managed\System.dll (this message is harmless)
+<RI> Initializing input.
+<RI> Input initialized.
+desktop: 1600x900 60Hz; virtual: 1600x900 at 0,0
+<RI> Initialized touch support.
+UnloadTime: 0.777930 ms
+Using VR Device: OpenVR
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+OpenVR initialized!
+ 
+(Filename:  Line: 347)
+
+[VRDevice] Successfully created device OpenVR.
+Current player is a host.
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+Connected to lighthouse:LHR-326F24E9
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+Parent of RectTransform is being set with parent property. Consider using the SetParent method instead, with the worldPositionStays argument set to false. This will retain local orientation and scale rather than world orientation and scale, which can prevent common UI scaling issues.
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at TutorialScript.highlightGrip () [0x00000] in <filename unknown>:0 
+  at TutorialScript.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+Log: connection {1} has been disconnected by timeout; address {::ffff:192.168.43.186:57938}
+Log: connection {1} has been disconnected by timeout; address {::ffff:192.168.43.186:58305}
+NullReferenceException: Object reference not set to an instance of an object
+  at PlayerController.DisableLocalVRMode () [0x00000] in <filename unknown>:0 
+  at PlayerController.OnDestroy () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+Setting up 3 worker threads for Enlighten.
+  Thread -> id: 5498 -> priority: 1 
+  Thread -> id: 3ec4 -> priority: 1 
+  Thread -> id: 42a8 -> priority: 1 
+OpenVR Shutdown
+ 
+(Filename:  Line: 701)
+

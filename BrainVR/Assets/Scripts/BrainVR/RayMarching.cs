@@ -57,7 +57,9 @@ public class RayMarching : MonoBehaviour
 	{
 		_rayMarchMaterial = new Material(rayMarchShader);
 		_compositeMaterial = new Material(compositeShader);
-	}
+        clipPlane = GameObject.Find("Clipping Plane");
+        cubeTarget = GameObject.Find("Cube");
+    }
 
 	private void Start()
 	{
@@ -72,10 +74,8 @@ public class RayMarching : MonoBehaviour
 		}
 	}
 
-	[SerializeField]
-	private Transform clipPlane;
-	[SerializeField]
-	private Transform cubeTarget;
+	private GameObject clipPlane;
+	private GameObject cubeTarget;
 	
 	private void OnRenderImage(RenderTexture source, RenderTexture destination)
 	{
@@ -118,8 +118,8 @@ public class RayMarching : MonoBehaviour
 		if(cubeTarget != null && clipPlane != null && clipPlane.gameObject.activeSelf)
 		{
 			var p = new Plane(
-				cubeTarget.InverseTransformDirection(clipPlane.transform.up), 
-				cubeTarget.InverseTransformPoint(clipPlane.position));
+				cubeTarget.transform.InverseTransformDirection(clipPlane.transform.up), 
+				cubeTarget.transform.InverseTransformPoint(clipPlane.transform.position));
 			_rayMarchMaterial.SetVector("_ClipPlane", new Vector4(p.normal.x, p.normal.y, p.normal.z, p.distance));
 		}
 		else
