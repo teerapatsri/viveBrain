@@ -26,6 +26,8 @@ Shader "Hidden/Ray Marching/Ray Marching"
 	float _Dimensions;
 	
 	float _Opacity;
+	int _ClippingOption;
+	int _ShaderNumber;
 	float4 _ClipDims;	
 	float4 _ClipPlane;
 	
@@ -67,7 +69,76 @@ Shader "Hidden/Ray Marching/Ray Marching"
 			border *= step(pos.z, _ClipDims.z);
 			border *= step(0, dot(_ClipPlane, float4(pos - 0.5, 1)) + _ClipPlane.w);
 
-	        // Standard blending	        
+	        // Standard blending
+			// Standard blending
+			if (_ShaderNumber == 0) {
+				// GM
+				if (src.a + 0.08 >= 0.270588235294118 && src.a + 0.08 <= 0.317647058823529) {
+					src.r = 0.2823529412f - 4 * (src.a - 0.270588235294118);
+					src.g = 0.4352941176f + 1 * (src.a - 0.270588235294118);
+					src.b = 1.0f - 1 * (src.a - 0.270588235294118);
+				}
+				else {
+					src.r = 0.0f;
+					src.g = 0.0f;
+					src.b = 0.0f;
+					// src.a = 0.0f;
+				}
+			}
+			else if (_ShaderNumber == 1) {
+				// WM
+				if (src.a + 0.08 >= 0.317647058823529 && src.a + 0.08 <= 0.380392156862745) {
+					src.r = 1.0f - 4 * (src.a - 0.317647058823529);
+					src.g = 0.7882352941f + 1 * (src.a - 0.317647058823529);
+					src.b = 0.2823529412f - 1 * (src.a - 0.317647058823529);
+					src.a = 0.02f;
+				}
+				else if (src.a + 0.08 >= 0.380392156862745 && src.a + 0.08 <= 0.423529411764706) {
+					src.r = 1.0f - 4 * (src.a - 0.380392156862745);
+					src.g = 0.7882352941f + 1 * (src.a - 0.380392156862745);
+					src.b = 0.2823529412f - 1 * (src.a - 0.380392156862745);
+					src.a = 0.05f;
+				}
+				else {
+					src.r = 0.0f;
+					src.g = 0.0f;
+					src.b = 0.0f;
+					// src.a = 0.0f;
+				}
+			}
+			else if (_ShaderNumber == 2) {
+				// GM & WM
+				if (src.a + 0.08 >= 0.270588235294118 && src.a + 0.08 <= 0.317647058823529) {
+					src.r = 0.2823529412f - 4 * (src.a - 0.270588235294118);
+					src.g = 0.4352941176f + 1 * (src.a - 0.270588235294118);
+					src.b = 1.0f - 1 * (src.a - 0.270588235294118);
+				}
+				else if (src.a + 0.08 >= 0.317647058823529 && src.a + 0.08 <= 0.380392156862745) {
+					src.r = 1.0f - 4 * (src.a - 0.317647058823529);
+					src.g = 0.7882352941f + 1 * (src.a - 0.317647058823529);
+					src.b = 0.2823529412f - 1 * (src.a - 0.317647058823529);
+					src.a = 0.02f;
+				}
+				else if (src.a + 0.08 >= 0.380392156862745 && src.a + 0.08 <= 0.423529411764706) {
+					src.r = 1.0f - 4 * (src.a - 0.380392156862745);
+					src.g = 0.7882352941f + 1 * (src.a - 0.380392156862745);
+					src.b = 0.2823529412f - 1 * (src.a - 0.380392156862745);
+					src.a = 0.05f;
+				}
+				else {
+					src.r = 0.0f;
+					src.g = 0.0f;
+					src.b = 0.0f;
+					// src.a = 0.0f;
+				}
+			}
+
+			// src.a *= saturate(_Opacity * border);
+
+			if (dot(_ClipPlane, float4(pos - 0.5, 1)) + _ClipPlane.w < 0 || (_ClippingOption == 1 && dot(_ClipPlane, float4(pos - 0.6, 1)) + _ClipPlane.w > 0)) {
+				src.a = 0;
+			}
+
 	        src.a *= saturate(_Opacity * border);
 	        src.rgb *= src.a;
 	        dst = (1.0f - dst.a) * src + dst;

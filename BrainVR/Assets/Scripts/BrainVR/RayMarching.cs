@@ -5,13 +5,21 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Camera))]
 public class RayMarching : MonoBehaviour
 {
-	[SerializeField]
+    [SerializeField]
+    [Header("Clipping Option")]
+    private bool twoSideClipping = false;
+
+    [SerializeField]
+    [Header("Shader")]
+    private int shaderNumber = 0;
+
+    [SerializeField]
 	[Header("Render in a lower resolution to increase performance.")]
 	private int downscale = 2;
 	[SerializeField]
 	private LayerMask volumeLayer;
 
-	[SerializeField]
+    [SerializeField]
 	private Shader compositeShader;
 	[SerializeField]
 	private Shader renderFrontDepthShader;
@@ -118,8 +126,9 @@ public class RayMarching : MonoBehaviour
 		{
 			_rayMarchMaterial.SetVector("_ClipPlane", Vector4.zero);
 		}
-
-		_rayMarchMaterial.SetFloat("_Opacity", opacity); // Blending strength 
+        _rayMarchMaterial.SetInt("_ClippingOption", twoSideClipping == true ? 1 : 0); // Clipping Pane Option
+        _rayMarchMaterial.SetInt("_ShaderNumber", shaderNumber); // Shader Mode
+        _rayMarchMaterial.SetFloat("_Opacity", opacity); // Blending strength 
 		_rayMarchMaterial.SetVector("_ClipDims", clipDimensions / 100f); // Clip box
 
 
@@ -173,7 +182,7 @@ public class RayMarching : MonoBehaviour
 		
 		_volumeBuffer.SetPixels(volumeColors);
 		_volumeBuffer.Apply();
-		
+		   
 		_rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
 	}
 }
