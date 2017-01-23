@@ -65,12 +65,6 @@ Shader "Hidden/Ray Marching/Ray Marching"
 		{
 			float4 src = tex3D(_VolumeTex, pos);
 
-			// clipping
-			float border = step(1 - _ClipDims.x, pos.x);
-			border *= step(pos.y, _ClipDims.y);
-			border *= step(pos.z, _ClipDims.z);
-			border *= step(0, dot(_ClipPlane, float4(pos - 0.5, 1)) + _ClipPlane.w);
-
 			// Standard blending
 			if (_ShaderNumber == 1) {
 				// GM
@@ -243,10 +237,16 @@ Shader "Hidden/Ray Marching/Ray Marching"
 					src.b = 0.00f;
 				}
 			}
-			// Two-side Clipping 
+			// plane clipping 
 			if (dot(_ClipPlane, float4(pos - 0.5, 1)) + _ClipPlane.w < 0 || (_ClippingOption == 1 && dot(_ClipPlane, float4(pos - 0.6, 1)) + _ClipPlane.w > 0)) {
 				src.a = 0;
 			}
+
+			// box clipping
+			float border = step(1 - _ClipDims.x, pos.x);
+			border *= step(pos.y, _ClipDims.y);
+			border *= step(pos.z, _ClipDims.z);
+			src.a *= border;
 
 			src.rgb *= src.a;
 			dst = (1.0f - dst.a) * src + dst;
