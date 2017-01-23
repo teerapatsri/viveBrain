@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 [RequireComponent(typeof(Camera))]
 public class RayMarching : MonoBehaviour
@@ -53,16 +54,21 @@ public class RayMarching : MonoBehaviour
 	private Camera _ppCamera;
 	private Texture3D _volumeBuffer;
 
+	private string[] files;
+
 	private void Awake()
 	{
 		_rayMarchMaterial = new Material(rayMarchShader);
 		_compositeMaterial = new Material(compositeShader);
-        clipPlane = GameObject.Find("Clipping Plane");
-        cubeTarget = GameObject.Find("Cube");
-    }
+    clipPlane = GameObject.Find("Clipping Plane");
+    cubeTarget = GameObject.Find("Cube");
+  }
 
 	private void Start()
 	{
+		if(enableExternalImages) {
+			LoadMRIImagesFromFolder();
+		}
 		GenerateVolumeTexture();
 	}
 
@@ -79,7 +85,7 @@ public class RayMarching : MonoBehaviour
 	
 	private void OnRenderImage(RenderTexture source, RenderTexture destination)
 	{
-        var renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
+    var renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
 
 		_rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
 
@@ -186,5 +192,34 @@ public class RayMarching : MonoBehaviour
 		_volumeBuffer.Apply();
 		   
 		_rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
+	}
+
+	public bool enableExternalImages = false;
+	public string imageFolderPath = "";
+
+	private void LoadMRIImagesFromFolder()
+	{
+		Debug.Log("Yayyy!!");
+    string pathPrefix = @"file://";
+		// Change this to change pictures folder
+		// string imageFolderPath = @"/Users/pirsquareff/Documents/Workspace/resource-viveBrain/MRI Images";
+		files = Directory.GetFiles(imageFolderPath, "*.png");
+
+		slices = new Texture2D[files.Length];
+		
+		int sliceCount = 0;
+		foreach(string filePath in files) {
+			string filePathWithPrefix = pathPrefix + filePath;
+			Debug.Log(filePath);
+			WWW www = new WWW(filePathWithPrefix);
+			// yield return www;
+			// LoadImageIntoTexture compresses JPGs by DXT1 and PNGs by DXT5
+			Texture2D texTemp = new Texture2D(1024, 1024, TextureFormat.DXT5, false);  
+			www.LoadImageIntoTexture(texTemp);
+			slices[sliceCount] = texTemp;
+			slices[sliceCount].name = Path.GetFileNameWithoutExtension(filePath);
+			Debug.Log(slices[sliceCount].name);
+			sliceCount++;
+		}
 	}
 }

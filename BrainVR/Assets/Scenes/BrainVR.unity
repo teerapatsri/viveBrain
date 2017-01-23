@@ -4437,6 +4437,8 @@ MonoBehaviour:
   volumeHeight: 256
   volumeDepth: 128
   clipDimensions: {x: 99, y: 99, z: 99, w: 1}
+  enableExternalImages: 1
+  imageFolderPath: /Users/pirsquareff/Documents/Workspace/resource-viveBrain/MRI Images
 --- !u!114 &413230962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9032,6 +9034,8 @@ MonoBehaviour:
   volumeHeight: 256
   volumeDepth: 128
   clipDimensions: {x: 99, y: 99, z: 99, w: 1}
+  enableExternalImages: 0
+  imageFolderPath: 
 --- !u!114 &1715283596
 MonoBehaviour:
   m_ObjectHideFlags: 0
