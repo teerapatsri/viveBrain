@@ -690,6 +690,8 @@ MonoBehaviour:
   volumeHeight: 256
   volumeDepth: 128
   clipDimensions: {x: 99, y: 99, z: 99, w: 1}
+  enableExternalImages: 1
+  imageFolderPath: Test Set
 --- !u!114 &114000011727264922
 MonoBehaviour:
   m_ObjectHideFlags: 1
