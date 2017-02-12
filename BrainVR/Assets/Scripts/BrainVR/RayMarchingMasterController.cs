@@ -1,22 +1,24 @@
-using UnityEngine;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
-public class RayMarching : MonoBehaviour
+[Serializable]
+public struct RayMarchingOptions
 {
     // [SerializeField]
-    // [Header("Clipping Option")]
-    // public bool twoSideClipping = false;
-
-    // [SerializeField]
-    // [Header("Shader")]
-    // public int shaderNumber = 0;
-
-    [SerializeField]
     [Header("Render in a lower resolution to increase performance.")]
-    private int downscale = 2;
+    public int downscale;
+
+    public RayMarchingOptions(int downscale = 2)
+    {
+        this.downscale = downscale;
+    }
+}
+
+public class RayMarchingMasterController : MonoBehaviour
+{
     [SerializeField]
     private LayerMask volumeLayer;
 
@@ -84,14 +86,14 @@ public class RayMarching : MonoBehaviour
     private GameObject clipPlane;
     private GameObject cubeTarget;
 
-    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    public void RenderImage(RenderTexture source, RenderTexture destination, RayMarchingOptions options, Camera camera)
     {
         var renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
 
         _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
 
-        var width = source.width / downscale;
-        var height = source.height / downscale;
+        var width = source.width / options.downscale;
+        var height = source.height / options.downscale;
 
         if (_ppCamera == null)
         {
@@ -100,7 +102,7 @@ public class RayMarching : MonoBehaviour
             _ppCamera.enabled = false;
         }
 
-        _ppCamera.CopyFrom(GetComponent<Camera>());
+        _ppCamera.CopyFrom(camera);
         _ppCamera.clearFlags = CameraClearFlags.SolidColor;
         _ppCamera.backgroundColor = Color.white;
         _ppCamera.cullingMask = volumeLayer;
@@ -200,7 +202,6 @@ public class RayMarching : MonoBehaviour
 
     private void LoadMRIImagesFromFolder()
     {
-        Debug.Log("Yayyy!!");
         // Change this to change pictures folder
         // string imageFolderPath = @"/Users/pirsquareff/Documents/Workspace/resource-viveBrain/MRI Images";
         var basePath = Path.Combine(Application.dataPath, "MRI Images");
