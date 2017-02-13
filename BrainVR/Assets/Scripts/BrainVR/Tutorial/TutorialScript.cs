@@ -367,21 +367,21 @@ public class TutorialScript : MonoBehaviour
                     leftWand.MenuDisable();
                     rightWand.MenuDisable();
                     //calculate Progress
-                    if (leftWand.IsTriggering() && !holdingLeftTrigger)
+                    if (leftWand.IsTriggerDown() && !holdingLeftTrigger)
                     {
                         holdingLeftTrigger = true;
                         progress += 0.25f;
                     }
-                    else if (!leftWand.IsTriggering())
+                    else if (!leftWand.IsTriggerDown())
                     {
                         holdingLeftTrigger = false;
                     }
-                    if (rightWand.IsTriggering() && !holdingRightTrigger)
+                    if (rightWand.IsTriggerDown() && !holdingRightTrigger)
                     {
                         holdingRightTrigger = true;
                         progress += 0.25f;
                     }
-                    else if (!rightWand.IsTriggering())
+                    else if (!rightWand.IsTriggerDown())
                     {
                         holdingRightTrigger = false;
                     }

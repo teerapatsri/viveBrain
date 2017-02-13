@@ -82,10 +82,13 @@ public class SteamVR_LaserPointer : MonoBehaviour
             isActive = true;
             this.transform.GetChild(0).gameObject.SetActive(true);
         }
-
         float dist = 100f;
+        if (active)
+        {
+            pointer.transform.localScale = new Vector3(thickness, thickness, dist);
 
-        SteamVR_TrackedController controller = GetComponent<SteamVR_TrackedController>();
+
+            SteamVR_TrackedController controller = GetComponent<SteamVR_TrackedController>();
 
         Ray raycast = new Ray(transform.position, transform.forward);
         RaycastHit hit;
@@ -125,15 +128,11 @@ public class SteamVR_LaserPointer : MonoBehaviour
         {
             dist = hit.distance;
         }
-
-        if (controller != null && controller.triggerPressed)
-        {
-            pointer.transform.localScale = new Vector3(thickness * 5f, thickness * 5f, dist);
+        //pointer.transform.localPosition = new Vector3(0f, 0f, dist/2f);
         }
         else
         {
-            pointer.transform.localScale = new Vector3(thickness, thickness, dist);
+            pointer.transform.localScale = Vector3.zero;
         }
-        pointer.transform.localPosition = new Vector3(0f, 0f, dist/2f);
     }
 }

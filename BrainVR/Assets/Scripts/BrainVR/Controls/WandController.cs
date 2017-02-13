@@ -11,6 +11,8 @@ public class WandController : MonoBehaviour
 
     private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input((int)trackedObj.index); } }
     private SteamVR_TrackedObject trackedObj;
+    private SteamVR_LaserPointer laser;
+
     [Header(" [Other object references]")]
     [Tooltip("The Other Wand")]
     public WandController otherWand;
@@ -18,17 +20,22 @@ public class WandController : MonoBehaviour
     public Interactable interactableController;
     [Tooltip("Clipping Plane")]
     public ClippingPlaneController planeController;
+    [Tooltip("Radial Menu Spawner")]
+    public RadialMenuSpawner spawner;
 
+    private RadialMenu menuSpawned;
     private bool gripEnabled, trigEnabled, menuEnabled;
     private bool trigger;
     private bool grip;
+    private bool showMenu;
     private bool controllingPlane;
+    private int option;
 
     [System.Serializable]
     public class Action
     {
-        public Color color;
         public Sprite sprite;
+        public Sprite activeSprite;
         public string title;
     }
 
@@ -37,10 +44,12 @@ public class WandController : MonoBehaviour
     void Start()
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
-
+        laser = GetComponent<SteamVR_LaserPointer>();
+        laser.active = false;
         trigger = false;
         controllingPlane = false;
         grip = false;
+        showMenu = false;
 
         gripEnabled = true;
         trigEnabled = true;
@@ -107,6 +116,7 @@ public class WandController : MonoBehaviour
                 grip = true;
                 otherWand.grip = false;
                 interactableController.BeginGrab(this);
+                controller.TriggerHapticPulse(3000);
             }
         }
         if (controller.GetPressUp(gripButton))
@@ -117,22 +127,80 @@ public class WandController : MonoBehaviour
         }
         if (controller.GetPressDown(padButton))
         {
-            //Spawn radial menu
-            /*
+            Debug.Log("Option: " + option);
             GameObject cubeObj = GameObject.Find("Cube");
             var renderStyle = cubeObj.GetComponent<CubeRenderStyleController>();
-
-            var v = controller.GetAxis(padButton);
-            Debug.Log(v.x + " " + v.y);
-            if (v.y < 0)
+            //Spawn radial menu
+            if (!showMenu && !otherWand.ShowingMenu() && menuSpawned == null)// no menu opened
             {
-                renderStyle.SetShaderNumber((renderStyle.ShaderNumber + 1) % 8);
+                SpawnMenu();
+            }
+            else if (!showMenu && otherWand.ShowingMenu())//other wand showing
+            {
+                otherWand.CloseMenu();
+                SpawnMenu();
+            }
+            else if(showMenu)//this wand showing
+            {
+                if (option == -1)
+                {
+                    CloseMenu();
+                }
+                else if (option == 0)
+                {
+                    renderStyle.SetTwoSideClipping(!renderStyle.IsTwoSideClipping);
+                    //TODO fix double clip mode in Axial mode
+                }
+                else if(option == 1)
+                {
+                    //change Color
+                    renderStyle.SetShaderNumber((renderStyle.ShaderNumber + 1) % 8);
+                }
+                else if (option == 2)
+                {
+                    //show Laser
+                    laser.active = !laser.active;
+                }
+            }
+        }
+        // && (controller.GetAxis().x != 0 || controller.GetAxis().y != 0)
+        if (controller.GetTouch(padButton) && menuSpawned !=null)
+        {
+            Debug.Log("touched");
+            Vector2 pos = new Vector2(controller.GetAxis().x, controller.GetAxis().y);
+            float radius = pos.magnitude;
+            if (radius >= 0.4)
+            {
+                Debug.Log("Radius OK");
+                Debug.Log("OPTION LENGTH"+ options.Length);
+                float arcRad = (2 * Mathf.PI / options.Length); //radians dividing region
+                float theta = (Mathf.Atan2(pos.y, pos.x) + 1.5f * Mathf.PI - arcRad/2) % (2 * Mathf.PI);//angle of thumb + offset to check easier
+                for(int i = 0; i<options.Length; i++)
+                {
+                    if(theta >= arcRad*i && theta <= arcRad * (i + 1))
+                    {
+                        if(option != i)
+                        {
+                            controller.TriggerHapticPulse(500);
+                            option = i;
+                            menuSpawned.selected = i;
+                        }
+                    }
+                }
+                Debug.Log("Degree = " + theta * Mathf.Rad2Deg);
             }
             else
             {
-                renderStyle.SetTwoSideClipping(!renderStyle.IsTwoSideClipping);
+                Debug.Log("Radius Zero");
+                option = -1;
+                menuSpawned.selected = -1;
             }
-            */
+
+        }
+        if (controller.GetTouchUp(padButton)&& menuSpawned !=null)
+        {
+            option = -1;
+            menuSpawned.selected = -1;
         }
     }
     public void GripEnable()
@@ -159,13 +227,17 @@ public class WandController : MonoBehaviour
     {
         menuEnabled = false;
     }
-    public bool IsGripping()
+    public bool IsGripDown()
     {
         return grip;
     }
-    public bool IsTriggering()
+    public bool IsTriggerDown()
     {
         return trigger;
+    }
+    public bool ShowingMenu()
+    {
+        return showMenu;
     }
     public void changeMode()
     {
@@ -174,5 +246,16 @@ public class WandController : MonoBehaviour
     public bool IsControllingPlane()
     {
         return controllingPlane;
+    }
+    private void SpawnMenu()
+    {
+        menuSpawned = spawner.SpawnMenu(this);
+        showMenu = true;
+    }
+    public void CloseMenu()
+    {
+        spawner.CloseMenu(menuSpawned);
+        menuSpawned = null;
+        showMenu = false;
     }
 }

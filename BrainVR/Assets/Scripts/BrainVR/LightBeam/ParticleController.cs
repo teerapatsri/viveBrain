@@ -21,7 +21,7 @@ public class ParticleController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        on = wand.IsGripping();
+        on = wand.IsGripDown();
         if (on)
         {
             particlesys.Play();
@@ -30,7 +30,7 @@ public class ParticleController : MonoBehaviour
             for (int i = 0; i < particles.Length; i++)
             {
                 Vector3 dir = target.position - particles[i].position;
-                if (dir.sqrMagnitude < 1) particles[i].lifetime = 0;
+                if (dir.sqrMagnitude < 1) particles[i].remainingLifetime = 0;
                 dir.Normalize();
                 particles[i].velocity += dir * Time.deltaTime * 10f;
             }
@@ -42,7 +42,7 @@ public class ParticleController : MonoBehaviour
             particlesys.GetParticles(particles);
             for (int i = 0; i < particles.Length; i++)
             {
-                particles[i].lifetime = 0;
+                particles[i].remainingLifetime = 0;
             }
             particlesys.SetParticles(particles, particles.Length);
             particlesys.Stop();

@@ -23,8 +23,8 @@ public class Interactable : MonoBehaviour
     private float distance;
     private float angle;
     private float change;
-    private float rotationFactor = 40000f;
-    private float velocityFactor = 20000f;
+    private float rotationFactor = 10000f;
+    private float velocityFactor = 30000f;
     private Vector3 defaultScale, preScale, localPos;
     // Use this for initialization
     void Start()
@@ -68,7 +68,7 @@ public class Interactable : MonoBehaviour
             if (rigidbody.angularVelocity.sqrMagnitude >= 0)
             {
                 int index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestLeft);
-                if (rightWand.IsTriggering())
+                if (rightWand.IsTriggerDown())
                 {
                     index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestRight);
                 }
@@ -102,12 +102,14 @@ public class Interactable : MonoBehaviour
         currentlyMoving = true;
         currentlyRotating = false;
         currentlyZooming = false;
+        /*
         int index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestLeft);
-        if (rightWand.IsGripping())
+        if (rightWand.IsGripDown())
         {
             index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestRight);
         }
         SteamVR_Controller.Input(index).TriggerHapticPulse(3000);
+        */
     }
     public void EndGrab(WandController wand)
     {

@@ -200,7 +200,7 @@ public class RayMarching : MonoBehaviour
 
     private void LoadMRIImagesFromFolder()
     {
-        Debug.Log("Yayyy!!");
+        Debug.Log("MRI Loading");
         // Change this to change pictures folder
         // string imageFolderPath = @"/Users/pirsquareff/Documents/Workspace/resource-viveBrain/MRI Images";
         var basePath = Path.Combine(Application.dataPath, "MRI Images");
