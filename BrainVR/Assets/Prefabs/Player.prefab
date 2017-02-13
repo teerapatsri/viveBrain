@@ -592,7 +592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderOptions:
-    downscale: 2
+    downscale: 1
 --- !u!114 &114000011727264922
 MonoBehaviour:
   m_ObjectHideFlags: 1

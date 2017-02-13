@@ -16,6 +16,7 @@ public class RayMarchingChild : MonoBehaviour
         GameObject gameControllerObj = GameObject.FindGameObjectWithTag("GameController");
         controller = gameControllerObj.GetComponent<RayMarchingMasterController>();
         cameraObj = GetComponent<Camera>();
+        cameraObj.depthTextureMode = DepthTextureMode.Depth;
     }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
