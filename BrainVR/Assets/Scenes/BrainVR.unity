@@ -6089,7 +6089,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: dc6a48b51faafeb4f8ccc746d911ea34, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6240,7 +6240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderOptions:
-    downscale: 2
+    downscale: 1
 --- !u!114 &413230962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10457,6 +10457,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cube: {fileID: 1980090531}
+  clippedObjectMaterial: {fileID: 2100000, guid: dc6a48b51faafeb4f8ccc746d911ea34,
+    type: 2}
 --- !u!33 &999975927
 MeshFilter:
   m_ObjectHideFlags: 0

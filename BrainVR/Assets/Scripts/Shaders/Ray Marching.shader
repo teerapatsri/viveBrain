@@ -254,7 +254,8 @@ Shader "Hidden/Ray Marching/Ray Marching"
 			}
 
 			// plane clipping
-			if (dot(_ClipPlane, float4(pos - 0.5, 1)) + _ClipPlane.w < 0 || (_ClippingOption == 1 && dot(_ClipPlane, float4(pos - 0.6, 1)) + _ClipPlane.w > 0)) {
+			// if (dot(_ClipPlane, float4(pos - 0.5, 1)) + _ClipPlane.w < 0 || (_ClippingOption == 1 && dot(_ClipPlane, float4(pos - 0.6, 1)) + _ClipPlane.w > 0)) {
+			if (dot(_ClipPlane, float4((pos - 0.5) * 2.0f, 1)) + _ClipPlane.w < 0 || (_ClippingOption == 1 && dot(_ClipPlane, float4((pos - 0.5) * 2.0f - 0.05f, 1)) + _ClipPlane.w > 0)) {
 				src.a = 0;
 			}
 
