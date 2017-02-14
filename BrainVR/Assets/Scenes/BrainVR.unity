@@ -6145,7 +6145,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &413230961
 MonoBehaviour:
@@ -10618,7 +10618,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1184467761
 GameObject:
@@ -10742,7 +10742,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 643638293}
-  - {fileID: 1259709597}
   - {fileID: 1993066551}
   m_Father: {fileID: 521903960}
   m_RootOrder: 0
@@ -10856,8 +10855,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1247347004}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1259709598
 MonoBehaviour:
@@ -11048,7 +11047,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &1329781645
 GameObject:
@@ -11131,7 +11130,7 @@ Transform:
   m_LocalScale: {x: 4, y: 1, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1343562537
 GameObject:
@@ -11848,7 +11847,7 @@ GameObject:
   - component: {fileID: 1715283605}
   m_Layer: 0
   m_Name: Controller (right)
-  m_TagString: Untagged
+  m_TagString: RightWand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11866,7 +11865,7 @@ GameObject:
   - component: {fileID: 1715283606}
   m_Layer: 0
   m_Name: Controller (left)
-  m_TagString: Untagged
+  m_TagString: LeftWand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11886,12 +11885,10 @@ MonoBehaviour:
   interactableController: {fileID: 1980090532}
   planeController: {fileID: 999975926}
   spawner: {fileID: 1809817608}
-  laser: {fileID: 0}
-  showMenu: 0
   options:
-  - sprite: {fileID: 21300000, guid: 9a0d048da3ef44d48ac0d5dd4b6e6f25, type: 3}
-    activeSprite: {fileID: 21300000, guid: b2a36a83fce29714bb7bd194b2a8cc2c, type: 3}
-    title: Laser
+  - sprite: {fileID: 21300000, guid: 4e2c2c947f69dda46a1a4232d4a1288c, type: 3}
+    activeSprite: {fileID: 21300000, guid: c7dd01d3d644d3d4189b0ca6da809954, type: 3}
+    title: SwitchPlane
   - sprite: {fileID: 21300000, guid: ef531b73764055445bf95d58c097787d, type: 3}
     activeSprite: {fileID: 21300000, guid: ecbd502325a826649872a5d4242f9561, type: 3}
     title: Shader
@@ -11913,12 +11910,10 @@ MonoBehaviour:
   interactableController: {fileID: 1980090532}
   planeController: {fileID: 999975926}
   spawner: {fileID: 778277163}
-  laser: {fileID: 0}
-  showMenu: 0
   options:
-  - sprite: {fileID: 21300000, guid: 9a0d048da3ef44d48ac0d5dd4b6e6f25, type: 3}
-    activeSprite: {fileID: 21300000, guid: b2a36a83fce29714bb7bd194b2a8cc2c, type: 3}
-    title: Laser
+  - sprite: {fileID: 21300000, guid: 4e2c2c947f69dda46a1a4232d4a1288c, type: 3}
+    activeSprite: {fileID: 21300000, guid: c7dd01d3d644d3d4189b0ca6da809954, type: 3}
+    title: SwitchPlane
   - sprite: {fileID: 21300000, guid: ef531b73764055445bf95d58c097787d, type: 3}
     activeSprite: {fileID: 21300000, guid: ecbd502325a826649872a5d4242f9561, type: 3}
     title: Shader
@@ -12673,7 +12668,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1844697484
 GameObject:
@@ -15878,7 +15873,7 @@ RectTransform:
   - {fileID: 556944424}
   - {fileID: 635014293}
   m_Father: {fileID: 1247347004}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

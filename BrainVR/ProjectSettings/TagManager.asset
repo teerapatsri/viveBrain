@@ -6,6 +6,8 @@ TagManager:
   tags:
   - VREnvironment
   - PlayerColor
+  - LeftWand
+  - RightWand
   layers:
   - Default
   - TransparentFX

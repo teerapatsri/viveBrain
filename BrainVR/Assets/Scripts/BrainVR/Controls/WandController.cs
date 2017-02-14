@@ -29,6 +29,8 @@ public class WandController : MonoBehaviour
     private bool grip;
     private bool showMenu;
     private bool controllingPlane;
+    private float theta;
+    private Vector2 padAxis;
     private int option;
 
     [System.Serializable]
@@ -66,52 +68,44 @@ public class WandController : MonoBehaviour
         }
         if (controller.GetPressDown(menuButton) && menuEnabled)
         {
+            /*
             changeMode();
             otherWand.changeMode();
+            */    
         }
         if (controller.GetPressUp(menuButton))
         {
         }
         if (controller.GetPressDown(triggerButton) && trigEnabled)
         {
-            if (IsControllingPlane())
+            if (CompareTag("LeftWand"))
             {//PLANE mode
                 trigger = true;
-                planeController.RotatePlane();
-                if (otherWand.trigger)
-                {
-                    //PlaneMODE DOUBLE TRIGGER
-                }
+                interactableController.BeginZoom();
+                //planeController.RotatePlane();
             }
-            else
+            else if(CompareTag("RightWand"))
             {//NORMAL mode
                 trigger = true;
-                interactableController.BeginTrigger(this);
-                if (otherWand.trigger) //Free Mode Double TRIGGER
-                {
-                    interactableController.BeginZoom();
-                }
+                laser.active = !laser.active;
+                //interactableController.BeginRotate(this);
             }
         }
         if (controller.GetPressUp(triggerButton))
         {
             //planeController.EndRotatePlane(this);
             trigger = false;
-            interactableController.EndTrigger(this);
-            if (otherWand.trigger) //Free Mode Double TRIGGER
-            {
-                interactableController.EndZoom();
-                //planeController.BeginRotatePlane(otherWand);
-            }
+            interactableController.EndRotate(this);
+            interactableController.EndZoom();
         }
         if (controller.GetPressDown(gripButton) && gripEnabled)
         {
-            if (controllingPlane)//Plane mode
+            if (CompareTag("LeftWand"))//Plane mode
             {
                 grip = false;
                 planeController.BeginMovePlane(this);
             }
-            else //NORMAL mode
+            else if (CompareTag("RightWand"))//NORMAL mode
             {
                 grip = true;
                 otherWand.grip = false;
@@ -158,21 +152,18 @@ public class WandController : MonoBehaviour
                 }
                 else if (option == 2)
                 {
-                    //show Laser
-                    laser.active = !laser.active;
+                    //switch plane
+                    planeController.RotatePlane();
                 }
             }
         }
         // && (controller.GetAxis().x != 0 || controller.GetAxis().y != 0)
         if (controller.GetTouch(padButton) && menuSpawned !=null)
         {
-            Debug.Log("touched");
             Vector2 pos = new Vector2(controller.GetAxis().x, controller.GetAxis().y);
             float radius = pos.magnitude;
             if (radius >= 0.4)
             {
-                Debug.Log("Radius OK");
-                Debug.Log("OPTION LENGTH"+ options.Length);
                 float arcRad = (2 * Mathf.PI / options.Length); //radians dividing region
                 float theta = (Mathf.Atan2(pos.y, pos.x) + 1.5f * Mathf.PI - arcRad/2) % (2 * Mathf.PI);//angle of thumb + offset to check easier
                 for(int i = 0; i<options.Length; i++)
@@ -187,21 +178,34 @@ public class WandController : MonoBehaviour
                         }
                     }
                 }
-                Debug.Log("Degree = " + theta * Mathf.Rad2Deg);
             }
             else
             {
-                Debug.Log("Radius Zero");
                 option = -1;
                 menuSpawned.selected = -1;
             }
 
+        }
+        else if (controller.GetTouchDown(padButton) && menuSpawned == null)
+        {
+            interactableController.BeginRotate(this);
+            padAxis = controller.GetAxis();
+        }
+        if (controller.GetTouch(padButton) && menuSpawned == null)
+        {
+            Vector2 axis = controller.GetAxis();
+            theta = (Mathf.Atan2(axis.y, axis.x) + Mathf.PI) - (Mathf.Atan2(padAxis.y, padAxis.x) + Mathf.PI);
+            if (Mathf.Abs(theta) > 1) theta = 0;
+            Debug.Log("theta = " + theta);
+            padAxis = axis;
+            interactableController.Rotate(theta);
         }
         if (controller.GetTouchUp(padButton)&& menuSpawned !=null)
         {
             option = -1;
             menuSpawned.selected = -1;
         }
+        
     }
     public void GripEnable()
     {

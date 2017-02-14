@@ -169,15 +169,8 @@ public class TutorialScript : MonoBehaviour
     }
     void Update()
     {
-        if (leftWand.IsControllingPlane() || rightWand.IsControllingPlane())
-        {
-            currentMode.text = "Plane Mode";
-            anatomicalPlane.text = plane.CurrentAxis();
-        }
-        else
-        {
-            currentMode.text = "Free Mode";
-        }
+        currentMode.text = "Current Axis: ";
+        anatomicalPlane.text = plane.CurrentAxis();
         switch (phase)
         {
 
