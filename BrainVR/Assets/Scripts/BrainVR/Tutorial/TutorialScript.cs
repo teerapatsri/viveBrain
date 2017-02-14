@@ -38,7 +38,7 @@ public class TutorialScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        phase = "Start";
+        phase = "Done";
         prePos = cube.transform.position;
         preRot = cube.transform.rotation;
         progress = 0;
@@ -181,6 +181,7 @@ public class TutorialScript : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.T))
                     {
                         phase = "Grab";
+                        Debug.Log("Entering Tutorial!");
                     }
                     else if (Input.GetKeyDown(KeyCode.Q))
                     {

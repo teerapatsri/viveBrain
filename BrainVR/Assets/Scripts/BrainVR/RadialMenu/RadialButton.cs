@@ -9,11 +9,15 @@ public class RadialButton : MonoBehaviour {
     public string title;
     public int id;
     public RadialMenu myMenu;
+    private Text buttonText;
     private Vector3 scale;
 
     void Start()
     {
+        buttonText = GetComponentInChildren<Text>();
         scale = icon.transform.localScale;
+        if(buttonText!=null)
+            buttonText.text = title;
     }
 
     public void Update()
