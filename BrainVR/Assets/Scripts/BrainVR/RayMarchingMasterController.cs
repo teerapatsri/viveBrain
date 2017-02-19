@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -156,9 +157,6 @@ public class RayMarchingMasterController : MonoBehaviour
 
     private void GenerateVolumeTexture()
     {
-        // sort
-        System.Array.Sort(slices, (x, y) => x.name.CompareTo(y.name));
-
         // use a bunch of memory!
         _volumeBuffer = new Texture3D(volumeWidth, volumeHeight, volumeDepth, TextureFormat.ARGB32, false);
 
@@ -203,29 +201,31 @@ public class RayMarchingMasterController : MonoBehaviour
     private void LoadMRIImagesFromFolder()
     {
         // Change this to change pictures folder
-        // string imageFolderPath = @"/Users/pirsquareff/Documents/Workspace/resource-viveBrain/MRI Images";
         var basePath = Path.Combine(Application.dataPath, "MRI Images");
         var path = Path.GetFullPath(Path.Combine(basePath, imageFolderPath));
-        var files = Directory.GetFiles(path, "*.png");
         Debug.Log("MRI Image Base Path: " + path);
 
-        slices = new Texture2D[files.Length];
+        var pngFilePaths = Directory.GetFiles(path, "*.png")
+            .Select(file => LoadTextureFromURL(file, true));
 
-        int sliceCount = 0;
-        const string pathPrefix = @"file://";
-        foreach (string filePath in files)
-        {
-            string filePathWithPrefix = pathPrefix + filePath;
-            WWW www = new WWW(filePathWithPrefix);
-            // yield return www;
-            // LoadImageIntoTexture compresses JPGs by DXT1 and PNGs by DXT5
-            Texture2D texTemp = new Texture2D(1024, 1024, TextureFormat.DXT5, false);
-            www.LoadImageIntoTexture(texTemp);
-            slices[sliceCount] = texTemp;
-            slices[sliceCount].name = Path.GetFileNameWithoutExtension(filePath);
-            sliceCount++;
-        }
+        var jpgFilePaths = Directory.GetFiles(path, "*.jpg")
+            .Select(file => LoadTextureFromURL(file, false));
 
-        Debug.Log("Slice count: " + sliceCount);
+        slices = pngFilePaths.Concat(jpgFilePaths).OrderBy(texture => texture.name).ToArray();
+
+        Debug.Log("Slice count: " + slices.Length);
+    }
+
+    private Texture2D LoadTextureFromURL(string filePath, bool isPNG)
+    {
+        // LoadImageIntoTexture compresses JPGs by DXT1 and PNGs by DXT5
+        var texture = new Texture2D(1024, 1024, isPNG ? TextureFormat.DXT5 : TextureFormat.DXT1, false);
+
+        WWW www = new WWW(@"file://" + filePath);
+        www.LoadImageIntoTexture(texture);
+
+        texture.name = Path.GetFileName(filePath);
+
+        return texture;
     }
 }
