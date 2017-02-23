@@ -30,7 +30,7 @@ Shader "Hidden/Ray Marching/Render Front Depth" {
 
 		half4 frag(v2f i) : COLOR
 		{
-			half depth = LinearEyeDepth(UNITY_SAMPLE_DEPTH(calcDepth(i)));
+			half depth = Linear01Depth(UNITY_SAMPLE_DEPTH(calcDepth(i)));
 			return float4(i.localPos, depth);
 		}
 

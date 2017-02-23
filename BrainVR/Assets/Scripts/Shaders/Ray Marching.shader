@@ -64,12 +64,12 @@ Shader "Hidden/Ray Marching/Ray Marching"
 		float4 dst = 0;
 		float3 stepDist = dir * STEP_SIZE;
 
-		float objectDepth = LinearEyeDepth(UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv[1])));
+		float objectDepth = Linear01Depth(UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv[1])));
 
 		float totalDist = backDepth - frontDepth;
 		float seenDist = objectDepth - frontDepth;
 		float distRatio = min(seenDist / totalDist, 1.0f);
-		int totalStep = ceil(lerp(0, STEP_CNT, distRatio));
+		float totalStep = lerp(0, STEP_CNT, distRatio);
 
 		for (int k = 0; k < STEP_CNT; k++)
 		{

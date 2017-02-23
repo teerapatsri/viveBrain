@@ -10,9 +10,49 @@
 		LOD 200
 		Cull Off
 
+		Pass
+        { 
+			Name "ShadowCaster"
+			Tags { "LightMode" = "ShadowCaster" }
+ 
+			Fog {Mode Off}
+			ZWrite On ZTest Less Cull Off
+			Offset 1, 1
+ 
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma multi_compile_shadowcaster
+			#include "UnityCG.cginc"
+
+			struct v2f {
+				V2F_SHADOW_CASTER;
+				float3 worldPos : TEXCOORD0;
+			};
+
+			float4 _ClipPlane;
+ 
+			v2f vert(appdata_full v)
+			{
+				v2f o;
+				TRANSFER_SHADOW_CASTER(o);
+				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				return o;
+			}
+ 
+			float4 frag(v2f i) : COLOR
+			{
+				clip(dot(_ClipPlane, float4(i.worldPos, 1)));
+				SHADOW_CASTER_FRAGMENT(i);
+			}
+
+			ENDCG
+        } 
+
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows
+		#pragma surface surf Standard
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -45,5 +85,5 @@
 		}
 		ENDCG
 	}
-	FallBack "Diffuse"
+	// FallBack "Diffuse"
 }
