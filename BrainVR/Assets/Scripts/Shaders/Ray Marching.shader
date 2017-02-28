@@ -3,13 +3,13 @@ Shader "Hidden/Ray Marching/Ray Marching"
 
 	CGINCLUDE
 
-	#include "UnityCG.cginc"
-	#pragma target 3.0
-	#pragma profileoption MaxLocalParams=1024
-	#pragma profileoption NumInstructionSlots=4096
-	#pragma profileoption NumMathInstructionSlots=4096
+#include "UnityCG.cginc"
+#pragma target 3.0
+#pragma profileoption MaxLocalParams=1024 
+#pragma profileoption NumInstructionSlots=4096
+#pragma profileoption NumMathInstructionSlots=4096
 
-	struct v2f {
+		struct v2f {
 		float4 pos : POSITION;
 		float2 uv[2] : TEXCOORD0;
 	};
@@ -43,33 +43,23 @@ Shader "Hidden/Ray Marching/Ray Marching"
 #if SHADER_API_D3D9
 		if (_MainTex_TexelSize.y < 0)
 			o.uv[0].y = 1 - o.uv[0].y;
-#endif
+#endif			
 		return o;
 	}
 
-	#define TOTAL_STEPS 128.0
-	#define STEP_CNT 128
-	#define STEP_SIZE 1 / 128.0
-
-	uniform sampler2D _CameraDepthTexture;
+#define TOTAL_STEPS 128.0
+#define STEP_CNT 128
+#define STEP_SIZE 1 / 128.0
 
 	half4 raymarch(v2f i, float offset)
 	{
 		float3 frontPos = tex2D(_FrontTex, i.uv[1]).xyz;
-		float frontDepth = tex2D(_FrontTex, i.uv[1]).w;
 		float3 backPos = tex2D(_BackTex, i.uv[1]).xyz;
-		float backDepth = tex2D(_BackTex, i.uv[1]).w;
 		float3 dir = backPos - frontPos;
 		float3 pos = frontPos;
 		float4 dst = 0;
 		float3 stepDist = dir * STEP_SIZE;
 
-		float objectDepth = Linear01Depth(UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uv[1])));
-
-		float totalDist = backDepth - frontDepth;
-		float seenDist = objectDepth - frontDepth;
-		float distRatio = min(seenDist / totalDist, 1.0f);
-		float totalStep = lerp(0, STEP_CNT, distRatio);
 
 		for (int k = 0; k < STEP_CNT; k++)
 		{
@@ -247,15 +237,8 @@ Shader "Hidden/Ray Marching/Ray Marching"
 					src.b = 0.00f;
 				}
 			}
-
-			// obstacle removing
-			if (k > totalStep) {
-				src.a = 0;
-			}
-
-			// plane clipping
-			// if (dot(_ClipPlane, float4(pos - 0.5, 1)) + _ClipPlane.w < 0 || (_ClippingOption == 1 && dot(_ClipPlane, float4(pos - 0.6, 1)) + _ClipPlane.w > 0)) {
-			if (dot(_ClipPlane, float4((pos - 0.5) * 2.0f, 1)) + _ClipPlane.w < 0 || (_ClippingOption == 1 && dot(_ClipPlane, float4((pos - 0.5) * 2.0f - 0.05f, 1)) + _ClipPlane.w > 0)) {
+			// plane clipping 
+			if (dot(_ClipPlane, float4(pos - 0.5, 1)) + _ClipPlane.w < 0 || (_ClippingOption == 1 && dot(_ClipPlane, float4(pos - 0.6, 1)) + _ClipPlane.w > 0)) {
 				src.a = 0;
 			}
 
@@ -276,21 +259,20 @@ Shader "Hidden/Ray Marching/Ray Marching"
 
 	ENDCG
 
-	Subshader
-	{
+		Subshader{
 		ZTest Always Cull Off ZWrite Off
-		Fog { Mode off }
+		Fog{ Mode off }
 
 		Pass
-		{
-			CGPROGRAM
-				#pragma vertex vert
-				#pragma fragment frag
-				half4 frag(v2f i) : COLOR{ return raymarch(i, 0); }
-			ENDCG
-		}
+	{
+		CGPROGRAM
+#pragma vertex vert
+#pragma fragment frag
+		half4 frag(v2f i) : COLOR{ return raymarch(i, 0); }
+		ENDCG
+	}
 	}
 
-	Fallback off
+		Fallback off
 
 } // shader
