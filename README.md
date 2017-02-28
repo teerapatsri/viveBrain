@@ -1,2 +1,0 @@
-# viveBrain
-Brain VR project
