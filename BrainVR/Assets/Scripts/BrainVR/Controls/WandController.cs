@@ -105,6 +105,7 @@ public class WandController : MonoBehaviour
             if (CompareTag("LeftWand"))//Plane mode
             {
                 grip = false;
+                gameController.ArrowActive = true;
                 planeController.BeginMovePlane(this);
             }
             else if (CompareTag("RightWand"))//NORMAL mode
@@ -117,6 +118,7 @@ public class WandController : MonoBehaviour
         }
         if (controller.GetPressUp(gripButton))
         {
+            gameController.ArrowActive = false;
             planeController.EndMovePlane(this);
             interactableController.EndGrab(this);
             grip = false;
@@ -212,7 +214,6 @@ public class WandController : MonoBehaviour
             //theta = (Mathf.Atan2(axis.y, axis.x) + Mathf.PI) - (Mathf.Atan2(padAxis.y, padAxis.x) + Mathf.PI);
             theta = axis.x - prevAxis.x;
             if (Mathf.Abs(theta) > 1) theta = 0;
-            Debug.Log("theta = " + theta);
             prevAxis = axis;
             interactableController.Rotate(theta);
         }

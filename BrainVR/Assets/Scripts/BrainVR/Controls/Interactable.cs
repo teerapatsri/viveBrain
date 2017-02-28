@@ -24,7 +24,7 @@ public class Interactable : MonoBehaviour
     private float angle;
     private float change;
     private float rotationFactor = 45000f;
-    private float velocityFactor = 40000f;
+    private float velocityFactor = 60000f;
     private Vector3 defaultScale, preScale, localPos;
     // Use this for initialization
     void Start()

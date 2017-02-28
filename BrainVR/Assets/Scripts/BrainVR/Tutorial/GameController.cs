@@ -29,6 +29,7 @@ public class GameController : MonoBehaviour
 
     private string twoSideText, planeAxis;
     private int shaderNumber;
+    private bool arrowActive = false;
     private string phase;
     private float progress;
     private float barLength = 30, barWidth = 5;
@@ -75,6 +76,19 @@ public class GameController : MonoBehaviour
         set
         {
             planeAxis = value;
+        }
+    }
+
+    public bool ArrowActive
+    {
+        get
+        {
+            return arrowActive;
+        }
+
+        set
+        {
+            arrowActive = value;
         }
     }
 

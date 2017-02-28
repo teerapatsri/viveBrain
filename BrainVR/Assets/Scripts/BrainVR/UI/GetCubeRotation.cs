@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CubeLooker : MonoBehaviour {
+public class GetCubeRotation : MonoBehaviour {
     // Update is called once per frame
     public GameObject cube;
     void Start()
@@ -11,6 +11,6 @@ public class CubeLooker : MonoBehaviour {
     }
 	void Update () {
         if(cube != null)
-            transform.rotation = Quaternion.LookRotation(cube.transform.position - transform.position);
+            transform.rotation = cube.transform.rotation;
     }
 }
