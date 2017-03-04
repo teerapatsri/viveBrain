@@ -4,6 +4,7 @@ using System.Collections;
 public class ClippingPlaneController : MonoBehaviour
 {
     public Transform cube;
+    public Material clippedObjectMaterial;
 
     private new Rigidbody rigidbody;
     private bool currentlyMovingPlane;
@@ -115,5 +116,22 @@ public class ClippingPlaneController : MonoBehaviour
     public bool IsMovingPlane()
     {
         return currentlyMovingPlane;
+    }
+
+    Vector4 GetPlaneVector()
+    {
+        var p0 = transform.TransformPoint(Vector3.zero);
+        var p1 = transform.TransformPoint(Vector3.forward);
+        var p2 = transform.TransformPoint(Vector3.right);
+        var p = new Plane(p0, p1, p2);
+        return new Vector4(p.normal.x, p.normal.y, p.normal.z, p.distance);
+    }
+
+    void LateUpdate()
+    {
+        if (clippedObjectMaterial != null)
+        {
+            clippedObjectMaterial.SetVector("_ClipPlane", GetPlaneVector());
+        }
     }
 }
