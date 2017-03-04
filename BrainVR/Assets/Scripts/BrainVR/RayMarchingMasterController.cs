@@ -20,6 +20,9 @@ public struct RayMarchingOptions
 
 public class RayMarchingMasterController : MonoBehaviour
 {
+    public GameObject cubeTarget;
+    public GameObject clipPlane;
+
     [SerializeField]
     private LayerMask volumeLayer;
 
@@ -63,8 +66,6 @@ public class RayMarchingMasterController : MonoBehaviour
     {
         _rayMarchMaterial = new Material(rayMarchShader);
         _compositeMaterial = new Material(compositeShader);
-        clipPlane = GameObject.Find("Clipping Plane");
-        cubeTarget = GameObject.Find("Cube");
     }
 
     private void Start()
@@ -84,8 +85,38 @@ public class RayMarchingMasterController : MonoBehaviour
         }
     }
 
-    private GameObject clipPlane;
-    private GameObject cubeTarget;
+    void OnDrawGizmos()
+    {
+        if (cubeTarget != null)
+        {
+            const float s = 0.5f;
+            var pnt1 = cubeTarget.transform.TransformPoint(new Vector3(s, s, s));
+            var pnt2 = cubeTarget.transform.TransformPoint(new Vector3(s, s, -s));
+            var pnt3 = cubeTarget.transform.TransformPoint(new Vector3(s, -s, -s));
+            var pnt4 = cubeTarget.transform.TransformPoint(new Vector3(s, -s, s));
+            var pnt5 = cubeTarget.transform.TransformPoint(new Vector3(-s, s, s));
+            var pnt6 = cubeTarget.transform.TransformPoint(new Vector3(-s, s, -s));
+            var pnt7 = cubeTarget.transform.TransformPoint(new Vector3(-s, -s, -s));
+            var pnt8 = cubeTarget.transform.TransformPoint(new Vector3(-s, -s, s));
+
+            Gizmos.color = new Color(1, 0.5f, 0, 0.5F);
+
+            Gizmos.DrawLine(pnt1, pnt2);
+            Gizmos.DrawLine(pnt2, pnt3);
+            Gizmos.DrawLine(pnt3, pnt4);
+            Gizmos.DrawLine(pnt4, pnt1);
+
+            Gizmos.DrawLine(pnt5, pnt6);
+            Gizmos.DrawLine(pnt6, pnt7);
+            Gizmos.DrawLine(pnt7, pnt8);
+            Gizmos.DrawLine(pnt8, pnt5);
+
+            Gizmos.DrawLine(pnt1, pnt5);
+            Gizmos.DrawLine(pnt2, pnt6);
+            Gizmos.DrawLine(pnt3, pnt7);
+            Gizmos.DrawLine(pnt4, pnt8);
+        }
+    }
 
     public void RenderImage(RenderTexture source, RenderTexture destination, RayMarchingOptions options, Camera camera)
     {
@@ -129,10 +160,7 @@ public class RayMarchingMasterController : MonoBehaviour
 
         if (cubeTarget != null && clipPlane != null && clipPlane.gameObject.activeSelf)
         {
-            var p = new Plane(
-                cubeTarget.transform.InverseTransformDirection(clipPlane.transform.up),
-                cubeTarget.transform.InverseTransformPoint(clipPlane.transform.position));
-            _rayMarchMaterial.SetVector("_ClipPlane", new Vector4(p.normal.x, p.normal.y, p.normal.z, p.distance));
+            _rayMarchMaterial.SetVector("_ClipPlane", GetPlaneVector());
         }
         else
         {
@@ -153,6 +181,21 @@ public class RayMarchingMasterController : MonoBehaviour
         RenderTexture.ReleaseTemporary(volumeTarget);
         RenderTexture.ReleaseTemporary(frontDepth);
         RenderTexture.ReleaseTemporary(backDepth);
+    }
+
+    private Vector4 GetPlaneVector()
+    {
+        var p0 = CalculatePlaneVector(Vector3.zero);
+        var p1 = CalculatePlaneVector(Vector3.forward);
+        var p2 = CalculatePlaneVector(Vector3.right);
+
+        var p = new Plane(p0, p1, p2);
+        return new Vector4(p.normal.x, p.normal.y, p.normal.z, p.distance);
+    }
+
+    private Vector3 CalculatePlaneVector(Vector3 v)
+    {
+        return cubeTarget.transform.InverseTransformPoint(clipPlane.transform.TransformPoint(v));
     }
 
     private void GenerateVolumeTexture()
