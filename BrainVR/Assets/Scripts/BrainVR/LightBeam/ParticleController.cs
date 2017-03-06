@@ -21,7 +21,7 @@ public class ParticleController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        on = wand.IsGripping();
+        on = wand.IsGripDown();
         if (on)
         {
             particlesys.Play();

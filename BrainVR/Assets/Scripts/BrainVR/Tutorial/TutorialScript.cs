@@ -38,7 +38,7 @@ public class TutorialScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        phase = "Start";
+        phase = "Done";
         prePos = cube.transform.position;
         preRot = cube.transform.rotation;
         progress = 0;
@@ -169,15 +169,8 @@ public class TutorialScript : MonoBehaviour
     }
     void Update()
     {
-        if (leftWand.IsControllingPlane() || rightWand.IsControllingPlane())
-        {
-            currentMode.text = "Plane Mode";
-            anatomicalPlane.text = plane.CurrentAxis();
-        }
-        else
-        {
-            currentMode.text = "Free Mode";
-        }
+        currentMode.text = "Current Axis: ";
+        anatomicalPlane.text = plane.CurrentAxis();
         switch (phase)
         {
 
@@ -188,6 +181,7 @@ public class TutorialScript : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.T))
                     {
                         phase = "Grab";
+                        Debug.Log("Entering Tutorial!");
                     }
                     else if (Input.GetKeyDown(KeyCode.Q))
                     {
@@ -367,21 +361,21 @@ public class TutorialScript : MonoBehaviour
                     leftWand.MenuDisable();
                     rightWand.MenuDisable();
                     //calculate Progress
-                    if (leftWand.IsTriggering() && !holdingLeftTrigger)
+                    if (leftWand.IsTriggerDown() && !holdingLeftTrigger)
                     {
                         holdingLeftTrigger = true;
                         progress += 0.25f;
                     }
-                    else if (!leftWand.IsTriggering())
+                    else if (!leftWand.IsTriggerDown())
                     {
                         holdingLeftTrigger = false;
                     }
-                    if (rightWand.IsTriggering() && !holdingRightTrigger)
+                    if (rightWand.IsTriggerDown() && !holdingRightTrigger)
                     {
                         holdingRightTrigger = true;
                         progress += 0.25f;
                     }
-                    else if (!rightWand.IsTriggering())
+                    else if (!rightWand.IsTriggerDown())
                     {
                         holdingRightTrigger = false;
                     }

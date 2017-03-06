@@ -23,8 +23,8 @@ public class Interactable : MonoBehaviour
     private float distance;
     private float angle;
     private float change;
-    private float rotationFactor = 40000f;
-    private float velocityFactor = 20000f;
+    private float rotationFactor = 10000f;
+    private float velocityFactor = 30000f;
     private Vector3 defaultScale, preScale, localPos;
     // Use this for initialization
     void Start()
@@ -58,6 +58,7 @@ public class Interactable : MonoBehaviour
         //case single trigger = rotate object
         if (attachedWand != null && currentlyRotating)
         {
+            /*
             rotationDelta = Quaternion.LookRotation(attachedWand.transform.position - transform.position) * Quaternion.Inverse(preRotation); //WAND POSITION DELTA
             rotationDelta *= Quaternion.Inverse(attachedWand.transform.rotation * Quaternion.Inverse(wandPreRotation));//PLUS WAND ROTATION DELTA
             rotationDelta.x = 0;
@@ -68,7 +69,7 @@ public class Interactable : MonoBehaviour
             if (rigidbody.angularVelocity.sqrMagnitude >= 0)
             {
                 int index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestLeft);
-                if (rightWand.IsTriggering())
+                if (rightWand.IsTriggerDown())
                 {
                     index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestRight);
                 }
@@ -78,11 +79,14 @@ public class Interactable : MonoBehaviour
             //transform.rotation = Quaternion.Slerp(transform.rotation, transform.rotation * rotationDelta, rotationFactor * Time.deltaTime);
             preRotation = Quaternion.LookRotation(attachedWand.transform.position - transform.position);
             wandPreRotation = attachedWand.transform.rotation;
+            */
+
+            
         }
         //case double trigger = ZOOM (Scale) object
         if (leftWand != null && rightWand != null && currentlyZooming)
         {
-            distance = Vector3.Distance(leftWand.transform.position, rightWand.transform.position); //distance between wands
+            distance = Vector3.Distance(leftWand.transform.position, transform.position); //distance between wands
             change = distance - startDistance;   //difference of default and current distance
             transform.localScale = new Vector3(Mathf.Clamp(preScale.x * (1 + change), defaultScale.x * 0.1f, defaultScale.x * 3f),
                                                  Mathf.Clamp(preScale.y * (1 + change), defaultScale.y * 0.1f, defaultScale.y * 3f),
@@ -102,12 +106,14 @@ public class Interactable : MonoBehaviour
         currentlyMoving = true;
         currentlyRotating = false;
         currentlyZooming = false;
+        /*
         int index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestLeft);
-        if (rightWand.IsGripping())
+        if (rightWand.IsGripDown())
         {
             index = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.FarthestRight);
         }
         SteamVR_Controller.Input(index).TriggerHapticPulse(3000);
+        */
     }
     public void EndGrab(WandController wand)
     {
@@ -117,7 +123,7 @@ public class Interactable : MonoBehaviour
             currentlyMoving = false;
         }
     }
-    public void BeginTrigger(WandController wand)
+    public void BeginRotate(WandController wand)
     {
         localPos = rbPlane.transform.localPosition;
         attachedWand = wand;
@@ -126,7 +132,12 @@ public class Interactable : MonoBehaviour
         currentlyMoving = false;
         currentlyZooming = false;
     }
-    public void EndTrigger(WandController wand)
+    public void Rotate(float theta)
+    {
+        rigidbody.AddTorque(-transform.up* theta* rotationFactor);
+        rbPlane.AddTorque(-transform.up * theta * rotationFactor);
+    }
+    public void EndRotate(WandController wand)
     {
         if (wand == attachedWand)
         {
@@ -136,7 +147,7 @@ public class Interactable : MonoBehaviour
     }
     public void BeginZoom()
     {
-        startDistance = Vector3.Distance(leftWand.transform.position, rightWand.transform.position);
+        startDistance = Vector3.Distance(leftWand.transform.position, transform.position);
         currentlyZooming = true;
         currentlyMoving = false;
         currentlyRotating = false; //to ensure getting out of rotating mode

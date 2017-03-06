@@ -30,7 +30,7 @@ public class lightBeam : MonoBehaviour
         //turn lightsaber off and on//
         if (wand != null)
         {
-            on = wand.IsGripping();
+            on = wand.IsGripDown();
         }
         endPos = cube;
         //extend the line//

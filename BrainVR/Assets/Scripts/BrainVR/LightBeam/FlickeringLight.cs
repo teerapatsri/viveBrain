@@ -26,7 +26,7 @@ public class FlickeringLight : MonoBehaviour
     {
         if (wand != null)
         {
-            on = wand.IsGripping();
+            on = wand.IsGripDown();
             lightObject.enabled = on;
         }
         if (intensity > 1.3f || intensity < 0.9f)
