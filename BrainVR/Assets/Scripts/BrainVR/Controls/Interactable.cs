@@ -23,8 +23,8 @@ public class Interactable : MonoBehaviour
     private float distance;
     private float angle;
     private float change;
-    private float rotationFactor = 10000f;
-    private float velocityFactor = 30000f;
+    private float rotationFactor = 45000f;
+    private float velocityFactor = 60000f;
     private Vector3 defaultScale, preScale, localPos;
     // Use this for initialization
     void Start()
@@ -81,16 +81,16 @@ public class Interactable : MonoBehaviour
             wandPreRotation = attachedWand.transform.rotation;
             */
 
-            
+
         }
         //case double trigger = ZOOM (Scale) object
         if (leftWand != null && rightWand != null && currentlyZooming)
         {
             distance = Vector3.Distance(leftWand.transform.position, transform.position); //distance between wands
             change = distance - startDistance;   //difference of default and current distance
-            transform.localScale = new Vector3(Mathf.Clamp(preScale.x * (1 + change), defaultScale.x * 0.1f, defaultScale.x * 3f),
-                                                 Mathf.Clamp(preScale.y * (1 + change), defaultScale.y * 0.1f, defaultScale.y * 3f),
-                                                 Mathf.Clamp(preScale.z * (1 + change), defaultScale.z * 0.1f, defaultScale.z * 3f));
+            transform.localScale = new Vector3(Mathf.Clamp(preScale.x * (1 + 1.5f * change), defaultScale.x * 0.1f, defaultScale.x * 3f),
+                                                 Mathf.Clamp(preScale.y * (1 + 1.5f * change), defaultScale.y * 0.1f, defaultScale.y * 3f),
+                                                 Mathf.Clamp(preScale.z * (1 + 1.5f * change), defaultScale.z * 0.1f, defaultScale.z * 3f));
 
             //compare with startDistance then change 
         }
@@ -134,7 +134,7 @@ public class Interactable : MonoBehaviour
     }
     public void Rotate(float theta)
     {
-        rigidbody.AddTorque(-transform.up* theta* rotationFactor);
+        rigidbody.AddTorque(-transform.up * theta * rotationFactor);
         rbPlane.AddTorque(-transform.up * theta * rotationFactor);
     }
     public void EndRotate(WandController wand)

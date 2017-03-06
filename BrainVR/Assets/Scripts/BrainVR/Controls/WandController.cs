@@ -22,6 +22,8 @@ public class WandController : MonoBehaviour
     public ClippingPlaneController planeController;
     [Tooltip("Radial Menu Spawner")]
     public RadialMenuSpawner spawner;
+    public GameController gameController;
+
 
     private RadialMenu menuSpawned;
     private bool gripEnabled, trigEnabled, menuEnabled;
@@ -30,7 +32,7 @@ public class WandController : MonoBehaviour
     private bool showMenu;
     private bool controllingPlane;
     private float theta;
-    private Vector2 padAxis;
+    private Vector2 prevAxis;
     private int option;
 
     [System.Serializable]
@@ -71,7 +73,7 @@ public class WandController : MonoBehaviour
             /*
             changeMode();
             otherWand.changeMode();
-            */    
+            */
         }
         if (controller.GetPressUp(menuButton))
         {
@@ -84,7 +86,7 @@ public class WandController : MonoBehaviour
                 interactableController.BeginZoom();
                 //planeController.RotatePlane();
             }
-            else if(CompareTag("RightWand"))
+            else if (CompareTag("RightWand"))
             {//NORMAL mode
                 trigger = true;
                 laser.active = !laser.active;
@@ -103,6 +105,7 @@ public class WandController : MonoBehaviour
             if (CompareTag("LeftWand"))//Plane mode
             {
                 grip = false;
+                gameController.ArrowActive = true;
                 planeController.BeginMovePlane(this);
             }
             else if (CompareTag("RightWand"))//NORMAL mode
@@ -115,15 +118,17 @@ public class WandController : MonoBehaviour
         }
         if (controller.GetPressUp(gripButton))
         {
+            gameController.ArrowActive = false;
             planeController.EndMovePlane(this);
             interactableController.EndGrab(this);
             grip = false;
         }
-        if (controller.GetPressDown(padButton))
+        if (controller.GetPressDown(padButton)) //show menu and pressing menu
         {
             Debug.Log("Option: " + option);
             GameObject cubeObj = GameObject.Find("Cube");
             var renderStyle = cubeObj.GetComponent<CubeRenderStyleController>();
+
             //Spawn radial menu
             if (!showMenu && !otherWand.ShowingMenu() && menuSpawned == null)// no menu opened
             {
@@ -134,7 +139,7 @@ public class WandController : MonoBehaviour
                 otherWand.CloseMenu();
                 SpawnMenu();
             }
-            else if(showMenu)//this wand showing
+            else if (showMenu)//this wand showing
             {
                 if (option == -1)
                 {
@@ -143,12 +148,22 @@ public class WandController : MonoBehaviour
                 else if (option == 0)
                 {
                     renderStyle.SetTwoSideClipping(!renderStyle.IsTwoSideClipping);
+                    if (renderStyle.IsTwoSideClipping)
+                    {
+                        gameController.TwoSideText = "Two sides view";
+                    }
+                    else
+                    {
+                        gameController.TwoSideText = "One side view";
+                    }
                     //TODO fix double clip mode in Axial mode
                 }
-                else if(option == 1)
+                else if (option == 1)
                 {
                     //change Color
-                    renderStyle.SetShaderNumber((renderStyle.ShaderNumber + 1) % 8);
+                    int shaderNumber = (renderStyle.ShaderNumber + 1) % 8;
+                    renderStyle.SetShaderNumber(shaderNumber);
+                    gameController.ShaderNumber = shaderNumber + 1;
                 }
                 else if (option == 2)
                 {
@@ -158,19 +173,20 @@ public class WandController : MonoBehaviour
             }
         }
         // && (controller.GetAxis().x != 0 || controller.GetAxis().y != 0)
-        if (controller.GetTouch(padButton) && menuSpawned !=null)
+        if (controller.GetTouch(padButton) && menuSpawned != null)//locate thumb on pad
         {
             Vector2 pos = new Vector2(controller.GetAxis().x, controller.GetAxis().y);
             float radius = pos.magnitude;
             if (radius >= 0.4)
             {
+                menuSpawned.ExitButtonTransparent();
                 float arcRad = (2 * Mathf.PI / options.Length); //radians dividing region
-                float theta = (Mathf.Atan2(pos.y, pos.x) + 1.5f * Mathf.PI - arcRad/2) % (2 * Mathf.PI);//angle of thumb + offset to check easier
-                for(int i = 0; i<options.Length; i++)
+                float theta = (Mathf.Atan2(pos.y, pos.x) + 1.5f * Mathf.PI - arcRad / 2) % (2 * Mathf.PI);//angle of thumb + offset to check easier
+                for (int i = 0; i < options.Length; i++)
                 {
-                    if(theta >= arcRad*i && theta <= arcRad * (i + 1))
+                    if (theta >= arcRad * i && theta <= arcRad * (i + 1))
                     {
-                        if(option != i)
+                        if (option != i)
                         {
                             controller.TriggerHapticPulse(500);
                             option = i;
@@ -181,6 +197,7 @@ public class WandController : MonoBehaviour
             }
             else
             {
+                menuSpawned.ExitButtonOpaque();
                 option = -1;
                 menuSpawned.selected = -1;
             }
@@ -189,23 +206,23 @@ public class WandController : MonoBehaviour
         else if (controller.GetTouchDown(padButton) && menuSpawned == null)
         {
             interactableController.BeginRotate(this);
-            padAxis = controller.GetAxis();
+            prevAxis = controller.GetAxis();
         }
         if (controller.GetTouch(padButton) && menuSpawned == null)
         {
             Vector2 axis = controller.GetAxis();
-            theta = (Mathf.Atan2(axis.y, axis.x) + Mathf.PI) - (Mathf.Atan2(padAxis.y, padAxis.x) + Mathf.PI);
+            //theta = (Mathf.Atan2(axis.y, axis.x) + Mathf.PI) - (Mathf.Atan2(padAxis.y, padAxis.x) + Mathf.PI);
+            theta = axis.x - prevAxis.x;
             if (Mathf.Abs(theta) > 1) theta = 0;
-            Debug.Log("theta = " + theta);
-            padAxis = axis;
+            prevAxis = axis;
             interactableController.Rotate(theta);
         }
-        if (controller.GetTouchUp(padButton)&& menuSpawned !=null)
+        if (controller.GetTouchUp(padButton) && menuSpawned != null)
         {
             option = -1;
             menuSpawned.selected = -1;
         }
-        
+
     }
     public void GripEnable()
     {
@@ -253,7 +270,7 @@ public class WandController : MonoBehaviour
     }
     private void SpawnMenu()
     {
-        menuSpawned = spawner.SpawnMenu(this);
+        menuSpawned = spawner.SpawnMenu(this, gameController);
         showMenu = true;
     }
     public void CloseMenu()

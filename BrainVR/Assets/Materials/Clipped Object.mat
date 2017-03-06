@@ -31,7 +31,7 @@ Material:
     m_Colors:
     - first:
         name: _ClipPlane
-      second: {r: 0.14222474, g: -0.00000007916241, b: -0.98983437, a: 1.4560443}
+      second: {r: 0, g: -1, b: 0, a: 0.20506307}
     - first:
         name: _Color
       second: {r: 1, g: 1, b: 1, a: 1}

@@ -5,7 +5,7 @@ public class ClippingPlaneController : MonoBehaviour
 {
     public Transform cube;
     public Material clippedObjectMaterial;
-    
+
     private new Rigidbody rigidbody;
     private bool currentlyMovingPlane;
 
@@ -109,7 +109,7 @@ public class ClippingPlaneController : MonoBehaviour
         }
         currentlyMovingPlane = false;
     }
-    public string CurrentAxis()
+    public string GetAxis()
     {
         return anatomicalPlane;
     }

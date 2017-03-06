@@ -55,6 +55,7 @@ public class RayMarching : MonoBehaviour
     private Material _compositeMaterial;
     private Camera _ppCamera;
     private Texture3D _volumeBuffer;
+    private CubeRenderStyleController renderStyle;
 
     private void Awake()
     {
@@ -62,6 +63,7 @@ public class RayMarching : MonoBehaviour
         _compositeMaterial = new Material(compositeShader);
         clipPlane = GameObject.Find("Clipping Plane");
         cubeTarget = GameObject.Find("Cube");
+        renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
     }
 
     private void Start()
@@ -85,8 +87,7 @@ public class RayMarching : MonoBehaviour
     private GameObject cubeTarget;
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        var renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
+    { 
 
         _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
 

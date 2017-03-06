@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TutorialScript : MonoBehaviour
+public class GameController : MonoBehaviour
 {
     public Color highlightColor;
     private Color defaultColor;
@@ -26,6 +26,10 @@ public class TutorialScript : MonoBehaviour
     public Interactable cube;
     public ClippingPlaneController plane;
 
+
+    private string twoSideText, planeAxis;
+    private int shaderNumber;
+    private bool arrowActive = false;
     private string phase;
     private float progress;
     private float barLength = 30, barWidth = 5;
@@ -35,6 +39,59 @@ public class TutorialScript : MonoBehaviour
     private Vector3 axis;
     private Vector3 prePos, posDelta;
     private Quaternion preRot, rotDelta;
+
+    public string TwoSideText
+    {
+        get
+        {
+            return twoSideText;
+        }
+
+        set
+        {
+            twoSideText = value;
+        }
+    }
+
+    public int ShaderNumber
+    {
+        get
+        {
+            return shaderNumber;
+        }
+
+        set
+        {
+            shaderNumber = value;
+        }
+    }
+
+    public string PlaneAxis
+    {
+        get
+        {
+            return planeAxis;
+        }
+
+        set
+        {
+            planeAxis = value;
+        }
+    }
+
+    public bool ArrowActive
+    {
+        get
+        {
+            return arrowActive;
+        }
+
+        set
+        {
+            arrowActive = value;
+        }
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -51,10 +108,12 @@ public class TutorialScript : MonoBehaviour
         menuRight.text = "";
         currentMode.text = "";
         anatomicalPlane.text = "";
+        TwoSideText = "One side view";
+        ShaderNumber = 1;
         backBar.localScale = new Vector3(barLength, barWidth, 1);
         defaultColor = Color.gray;
         Transform lgrip = leftWandRenderer.FindComponent("lgrip");
-        if (lgrip!=null) defaultColor = lgrip.GetComponent<MeshRenderer>().material.color;
+        if (lgrip != null) defaultColor = lgrip.GetComponent<MeshRenderer>().material.color;
     }
 
     // Update is called once per frame
@@ -69,108 +128,151 @@ public class TutorialScript : MonoBehaviour
         progressBar.localScale = Vector3.zero;
         backBar.localScale = Vector3.zero;
     }
-    private void highlightGrip()
+    private void highlight(string part)
     {
-        Transform lgrip = leftWandRenderer.FindComponent("lgrip");
-        if (lgrip != null)
+        switch (part)
         {
-            lgrip.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
-        }
-        Transform rgrip = leftWandRenderer.FindComponent("rgrip");
-        if (rgrip != null)
-        {
-            rgrip.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
-        }
-        lgrip = rightWandRenderer.FindComponent("lgrip");
-        if (lgrip != null)
-        {
-            lgrip.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
-        }
-        rgrip = rightWandRenderer.FindComponent("rgrip");
-        if (rgrip != null)
-        {
-            rgrip.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+            case ("leftGrip"):
+                {
+                    Transform lgrip = leftWandRenderer.FindComponent("lgrip");
+                    if (lgrip != null)
+                    {
+                        lgrip.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+                    }
+                    lgrip = rightWandRenderer.FindComponent("lgrip");
+                    if (lgrip != null)
+                    {
+                        lgrip.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+                    }
+                    break;
+                }
+            case ("rightGrip"):
+                {
+                    Transform rgrip = leftWandRenderer.FindComponent("rgrip");
+                    if (rgrip != null)
+                    {
+                        rgrip.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+                    }
+                    rgrip = rightWandRenderer.FindComponent("rgrip");
+                    if (rgrip != null)
+                    {
+                        rgrip.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+                    }
+                    break;
+                }
+            case ("leftTrigger"):
+                {
+                    Transform trigger = leftWandRenderer.FindComponent("trigger");
+                    if (trigger != null)
+                    {
+                        trigger.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+                    }
+                    break;
+                }
+            case ("rightTrigger"):
+                {
+                    Transform trigger = rightWandRenderer.FindComponent("trigger");
+                    if (trigger != null)
+                    {
+                        trigger.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+                    }
+                    break;
+                }
+            case ("leftMenu"):
+                {
+                    Transform menu = leftWandRenderer.FindComponent("button");
+                    if (menu != null)
+                    {
+                        menu.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+                    }
+                    break;
+                }
+            case ("rightMenu"):
+                {
+                    Transform menu = rightWandRenderer.FindComponent("button");
+                    if (menu != null)
+                    {
+                        menu.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
+                    }
+                    break;
+                }
         }
     }
-    private void unHighlightGrip()
+    private void unHighlight(string part)
     {
-        Transform lgrip = leftWandRenderer.FindComponent("lgrip");
-        if (lgrip != null)
+        switch (part)
         {
-            lgrip.GetComponent<MeshRenderer>().material.color = defaultColor;
-        }
-        Transform rgrip = leftWandRenderer.FindComponent("rgrip");
-        if (rgrip != null)
-        {
-            rgrip.GetComponent<MeshRenderer>().material.color = defaultColor;
-        }
-        lgrip = rightWandRenderer.FindComponent("lgrip");
-        if (lgrip != null)
-        {
-            lgrip.GetComponent<MeshRenderer>().material.color = defaultColor;
-        }
-        rgrip = rightWandRenderer.FindComponent("rgrip");
-        if (rgrip != null)
-        {
-            rgrip.GetComponent<MeshRenderer>().material.color = defaultColor;
-        }
-    }
-    private void highlightTrig()
-    {
-        Transform trigger = leftWandRenderer.FindComponent("trigger");
-        if (trigger != null)
-        {
-            trigger.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
-        }
-        trigger = rightWandRenderer.FindComponent("trigger");
-        if (trigger != null)
-        {
-            trigger.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
-        }
-    }
-    private void unHighlightTrig()
-    {
-        Transform trigger = leftWandRenderer.FindComponent("trigger");
-        if (trigger != null)
-        {
-            trigger.GetComponent<MeshRenderer>().material.color = defaultColor;
-        }
-        trigger = rightWandRenderer.FindComponent("trigger");
-        if (trigger != null)
-        {
-            trigger.GetComponent<MeshRenderer>().material.color = defaultColor;
-        }
-    }
-    private void highlightMenu()
-    {
-        Transform menu = leftWandRenderer.FindComponent("button");
-        if (menu != null)
-        {
-            menu.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
-        }
-        menu = rightWandRenderer.FindComponent("button");
-        if (menu != null)
-        {
-            menu.GetComponent<MeshRenderer>().material.color = Color.Lerp(defaultColor, highlightColor, Mathf.PingPong(Time.time, 1));
-        }
-    }
-    private void unHighlightMenu()
-    {
-        Transform menu = leftWandRenderer.FindComponent("button");
-        if (menu != null)
-        {
-            menu.GetComponent<MeshRenderer>().material.color = defaultColor;
-        }
-        menu = rightWandRenderer.FindComponent("button");
-        if (menu != null)
-        {
-            menu.GetComponent<MeshRenderer>().material.color = defaultColor;
+            case ("leftGrip"):
+                {
+                    Transform lgrip = leftWandRenderer.FindComponent("lgrip");
+                    if (lgrip != null)
+                    {
+                        lgrip.GetComponent<MeshRenderer>().material.color = defaultColor;
+                    }
+                    Transform rgrip = leftWandRenderer.FindComponent("rgrip");
+                    if (rgrip != null)
+                    {
+                        rgrip.GetComponent<MeshRenderer>().material.color = defaultColor;
+                    }
+                    break;
+                }
+            case ("rightGrip"):
+                {
+                    Transform lgrip = rightWandRenderer.FindComponent("lgrip");
+                    if (lgrip != null)
+                    {
+                        lgrip.GetComponent<MeshRenderer>().material.color = defaultColor;
+                    }
+                    Transform rgrip = rightWandRenderer.FindComponent("rgrip");
+                    if (rgrip != null)
+                    {
+                        rgrip.GetComponent<MeshRenderer>().material.color = defaultColor;
+                    }
+                    break;
+                }
+            case ("leftTrigger"):
+                {
+                    Transform trigger = leftWandRenderer.FindComponent("trigger");
+                    if (trigger != null)
+                    {
+                        trigger.GetComponent<MeshRenderer>().material.color = defaultColor;
+                    }
+                    break;
+                }
+            case ("rightTrigger"):
+                {
+                    Transform trigger = rightWandRenderer.FindComponent("trigger");
+                    if (trigger != null)
+                    {
+                        trigger.GetComponent<MeshRenderer>().material.color = defaultColor;
+                    }
+                    break;
+                }
+            case ("leftMenu"):
+                {
+                    Transform menu = leftWandRenderer.FindComponent("button");
+                    if (menu != null)
+                    {
+                        menu.GetComponent<MeshRenderer>().material.color = defaultColor;
+                    }
+                    break;
+                }
+            case ("rightMenu"):
+                {
+                    Transform menu = rightWandRenderer.FindComponent("button");
+                    if (menu != null)
+                    {
+                        menu.GetComponent<MeshRenderer>().material.color = defaultColor;
+                    }
+                    break;
+                }
         }
     }
     void Update()
     {
-        currentMode.text = "Current Axis: ";
-        anatomicalPlane.text = plane.CurrentAxis();
+        //currentMode.text = "Current Axis"; // TOP FLOATING TEXT
+        PlaneAxis = plane.GetAxis();
+        //anatomicalPlane.text = plane.CurrentAxis(); //subTOP Floating TEXT
         switch (phase)
         {
 
@@ -193,8 +295,8 @@ public class TutorialScript : MonoBehaviour
                 }
             case ("Grab"):
                 {
-                    instructionText.text = "Hold either of the GRIP buttons to MOVE the model";
-                    grabLeft.text = "Move";
+                    instructionText.text = "MOVE the model";
+                    grabLeft.text = "look at other controller";
                     grabRight.text = "Move";
                     triggerLeft.text = "";
                     triggerRight.text = "";
@@ -225,7 +327,7 @@ public class TutorialScript : MonoBehaviour
                             phase = "Rotate";
                             progress = 0;
                             delay = delayTime;
-                            unHighlightGrip();
+                            unHighlight("grip");
                             Transform trigger = leftWandRenderer.FindComponent("trigger");
                             if (trigger != null)
                             {
@@ -237,13 +339,13 @@ public class TutorialScript : MonoBehaviour
                     //render bar
                     updateBar();
                     //HighLight
-                    highlightGrip();
-                    
+                    highlight("rightGrip");
+
                     break;
                 }
             case ("Rotate"):
                 {
-                    instructionText.text = "Hold one of the TRIGGER buttons to ROTATE";
+                    instructionText.text = "ROTATE";
                     grabLeft.text = "Move";
                     grabRight.text = "Move";
                     triggerLeft.text = "Rotate";
@@ -270,11 +372,14 @@ public class TutorialScript : MonoBehaviour
                             phase = "Zoom";
                             progress = 0;
                             delay = delayTime;
+                            unHighlight("rightPad");
+                            unHighlight("leftPad");
                         }
                     }
                     //render bar
                     updateBar();
-                    highlightTrig();
+                    highlight("rightPad");
+                    highlight("leftPad");
                     break;
                 }
             case ("Zoom"):
@@ -298,7 +403,6 @@ public class TutorialScript : MonoBehaviour
                             phase = "Change Mode";
                             progress = 0;
                             delay = delayTime;
-                            unHighlightTrig();
                         }
                     }
                     //render bar
@@ -337,13 +441,11 @@ public class TutorialScript : MonoBehaviour
                             progress = 0;
                             delay = delayTime;
                             preRot = plane.transform.rotation;
-                            unHighlightMenu();
                             break;
                         }
                     }
                     //render bar
                     updateBar();
-                    highlightMenu();
                     break;
                 }
             case ("RotatePlane"):
@@ -391,13 +493,13 @@ public class TutorialScript : MonoBehaviour
                             progress = 0;
                             delay = delayTime;
                             prePos = plane.transform.position;
-                            unHighlightTrig();
+                            //unHighlightTrig();
                             break;
                         }
                     }
                     //render bar
                     updateBar();
-                    highlightTrig();
+                    //highlightTrig();
                     break;
                 }
             case ("SlidePlane"):
@@ -428,13 +530,13 @@ public class TutorialScript : MonoBehaviour
                             phase = "Free";
                             progress = 0;
                             delay = delayTime;
-                            unHighlightGrip();
+                            //unHighlight("grip");
                             break;
                         }
                     }
                     //render bar
                     updateBar();
-                    highlightGrip();
+                    //highlight("grip");
                     break;
                 }
             case ("Free"):
