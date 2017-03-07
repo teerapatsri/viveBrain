@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 223095511876230412}
   - component: {fileID: 114283634379540158}
   - component: {fileID: 114963591084682594}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ButtonTextCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 0673dc557944cb14a9e59f01fcab8d99, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
