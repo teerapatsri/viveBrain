@@ -14120,6 +14120,9 @@ MonoBehaviour:
   volumeLayer:
     serializedVersion: 2
     m_Bits: 1
+  uiLayer:
+    serializedVersion: 2
+    m_Bits: 32
   compositeShader: {fileID: 4800000, guid: 9be4ceea0147eb24fae365196d42254b, type: 3}
   renderFrontDepthShader: {fileID: 4800000, guid: 421066edce8e7054ebf3ef0b41a1d22b,
     type: 3}

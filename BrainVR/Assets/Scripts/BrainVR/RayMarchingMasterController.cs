@@ -12,7 +12,7 @@ public struct RayMarchingOptions
     [Header("Render in a lower resolution to increase performance.")]
     public int downscale;
 
-    public RayMarchingOptions(int downscale = 2)
+    public RayMarchingOptions(int downscale = 1)
     {
         this.downscale = downscale;
     }
@@ -25,6 +25,7 @@ public class RayMarchingMasterController : MonoBehaviour
 
     [SerializeField]
     private LayerMask volumeLayer;
+    public LayerMask uiLayer;
 
     [SerializeField]
     private Shader compositeShader;
@@ -60,6 +61,7 @@ public class RayMarchingMasterController : MonoBehaviour
     private Material _rayMarchMaterial;
     private Material _compositeMaterial;
     private Camera _ppCamera;
+    private Camera _uiCamera;
     private Texture3D _volumeBuffer;
 
     private void Awake()
@@ -124,8 +126,13 @@ public class RayMarchingMasterController : MonoBehaviour
 
         _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
 
-        var width = source.width / options.downscale;
-        var height = source.height / options.downscale;
+        var sourceWidth = source.width;
+        var sourceHeight = source.height;
+
+        var width = sourceWidth / options.downscale;
+        var height = sourceHeight / options.downscale;
+
+        // Initialize cube volume camera
 
         if (_ppCamera == null)
         {
@@ -139,6 +146,21 @@ public class RayMarchingMasterController : MonoBehaviour
         _ppCamera.backgroundColor = Color.white;
         _ppCamera.cullingMask = volumeLayer;
 
+        // Initialize UI camera
+
+        if (_uiCamera == null)
+        {
+            var go = new GameObject("UICamera");
+            _uiCamera = go.AddComponent<Camera>();
+            _uiCamera.enabled = false;
+        }
+
+        _uiCamera.CopyFrom(camera);
+        _uiCamera.clearFlags = CameraClearFlags.Nothing;
+        _uiCamera.cullingMask = uiLayer;
+
+        // Render cube depth textures
+
         var frontDepth = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGBFloat);
         var backDepth = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGBFloat);
 
@@ -148,13 +170,13 @@ public class RayMarchingMasterController : MonoBehaviour
         //TODO:FIX
         //Shader.SetGlobalVector("_VolumeScale", cubeTarget.transform.localScale);
 
-        // Render depths
         _ppCamera.targetTexture = frontDepth;
         _ppCamera.RenderWithShader(renderFrontDepthShader, "RenderType");
         _ppCamera.targetTexture = backDepth;
         _ppCamera.RenderWithShader(renderBackDepthShader, "RenderType");
 
         // Render volume
+
         _rayMarchMaterial.SetTexture("_FrontTex", frontDepth);
         _rayMarchMaterial.SetTexture("_BackTex", backDepth);
 
@@ -171,12 +193,15 @@ public class RayMarchingMasterController : MonoBehaviour
         _rayMarchMaterial.SetFloat("_Opacity", opacity); // Blending strength 
         _rayMarchMaterial.SetVector("_ClipDims", clipDimensions / 100f); // Clip box
 
-
         Graphics.Blit(null, volumeTarget, _rayMarchMaterial);
 
         //Composite
+
         _compositeMaterial.SetTexture("_BlendTex", volumeTarget);
         Graphics.Blit(source, destination, _compositeMaterial);
+
+        _uiCamera.targetTexture = destination;
+        _uiCamera.Render();
 
         RenderTexture.ReleaseTemporary(volumeTarget);
         RenderTexture.ReleaseTemporary(frontDepth);
