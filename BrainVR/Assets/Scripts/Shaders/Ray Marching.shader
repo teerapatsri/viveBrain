@@ -87,6 +87,7 @@ Shader "Hidden/Ray Marching/Ray Marching"
 					src.r = 0.0f;
 					src.g = 0.0f;
 					src.b = 0.0f;
+					src.a = 0.0f;
 				}
 			}
 			else if (_ShaderNumber == 2) {
@@ -245,6 +246,7 @@ Shader "Hidden/Ray Marching/Ray Marching"
 					src.r = 0.00f;
 					src.g = 0.00f;
 					src.b = 0.00f;
+					// src.a = 0.00f;
 				}
 			}
 
