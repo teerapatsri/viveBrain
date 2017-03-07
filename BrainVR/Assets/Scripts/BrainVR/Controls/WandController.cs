@@ -13,6 +13,9 @@ public class WandController : MonoBehaviour
     private SteamVR_TrackedObject trackedObj;
     private SteamVR_LaserPointer laser;
 
+    public AudioClip[] audioclips;
+    private AudioSource audioSource;
+
     [Header(" [Other object references]")]
     [Tooltip("The Other Wand")]
     public WandController otherWand;
@@ -49,7 +52,11 @@ public class WandController : MonoBehaviour
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
         laser = GetComponent<SteamVR_LaserPointer>();
-        laser.active = false;
+        audioSource = GetComponent<AudioSource>();
+        if(laser != null)
+        {
+            laser.active = false;
+        }
         trigger = false;
         controllingPlane = false;
         grip = false;
@@ -110,14 +117,31 @@ public class WandController : MonoBehaviour
             }
             else if (CompareTag("RightWand"))//NORMAL mode
             {
+                if(grip == false)
+                {
+                    audioSource.clip = audioclips[4];
+                    audioSource.Play();
+                }
                 grip = true;
                 otherWand.grip = false;
                 interactableController.BeginGrab(this);
                 controller.TriggerHapticPulse(3000);
             }
         }
+        if (controller.GetPress(gripButton) && grip)
+        {
+            if (audioSource.isPlaying) return;
+            audioSource.clip = audioclips[Random.Range(2,4)];
+            audioSource.Play();
+        }
         if (controller.GetPressUp(gripButton))
         {
+            if (CompareTag("RightWand"))
+            {
+                audioSource.Stop();
+                audioSource.clip = audioclips[5];
+                audioSource.Play();
+            }
             gameController.ArrowActive = false;
             planeController.EndMovePlane(this);
             interactableController.EndGrab(this);

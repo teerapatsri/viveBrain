@@ -15254,6 +15254,7 @@ GameObject:
   - component: {fileID: 1715283597}
   - component: {fileID: 1715283589}
   - component: {fileID: 1715283605}
+  - component: {fileID: 1715283607}
   m_Layer: 0
   m_Name: Controller (right)
   m_TagString: RightWand
@@ -15271,7 +15272,6 @@ GameObject:
   - component: {fileID: 1715283600}
   - component: {fileID: 1715283599}
   - component: {fileID: 1715283590}
-  - component: {fileID: 1715283606}
   m_Layer: 0
   m_Name: Controller (left)
   m_TagString: LeftWand
@@ -15290,6 +15290,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c3693851fa961a43a0ca553b959a78f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioclips:
+  - {fileID: 8300000, guid: 8c3ccf4259fc0324da2adb97867f901b, type: 3}
+  - {fileID: 8300000, guid: 2b8df60b0819a0447b3ff61c8a5c3eee, type: 3}
+  - {fileID: 8300000, guid: 533b67237a8f8d34d82fad581a0198e5, type: 3}
+  - {fileID: 8300000, guid: be68c1197cf028844ad2ad85af74ea70, type: 3}
+  - {fileID: 8300000, guid: 59bb98f3348e2054d872236212bfc81f, type: 3}
+  - {fileID: 8300000, guid: a60ef129b87a7504c82c55993741d7b0, type: 3}
   otherWand: {fileID: 1715283590}
   interactableController: {fileID: 1980090532}
   planeController: {fileID: 999975926}
@@ -15316,6 +15323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c3693851fa961a43a0ca553b959a78f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioclips: []
   otherWand: {fileID: 1715283589}
   interactableController: {fileID: 1980090532}
   planeController: {fileID: 999975926}
@@ -15569,24 +15577,87 @@ MonoBehaviour:
   pointer: {fileID: 0}
   addRigidBody: 0
   reference: {fileID: 0}
---- !u!114 &1715283606
-MonoBehaviour:
+  laserBeamMaterial: {fileID: 2100000, guid: c2888449693a2464692a47b57aafe73d, type: 2}
+--- !u!82 &1715283607
+AudioSource:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1715283588}
+  m_GameObject: {fileID: 1715283587}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4e8a839a7c5b7e4580c59e305fb5f01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  active: 1
-  color: {r: 1, g: 0, b: 0, a: 0}
-  thickness: 0.002
-  holder: {fileID: 0}
-  pointer: {fileID: 0}
-  addRigidBody: 0
-  reference: {fileID: 0}
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0.409
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!1 &1728393021
 GameObject:
   m_ObjectHideFlags: 0
