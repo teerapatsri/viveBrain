@@ -9,7 +9,7 @@ using UnityEngine.VR;
 
 public class PlayerController : NetworkBehaviour
 {
-    const float playerDisplayYOffset = 0.5f;
+    const float playerDisplayYOffset = 0.0f;
 
     public GameObject playerDisplay;
     public GameObject playerColorObj;
