@@ -150,6 +150,10 @@ public class PlayerController : NetworkBehaviour
     {
         if (currentPlayerMode == newPlayerMode) return;
 
+        if (currentPlayerMode == PlayerMode.VR)
+        {
+            DisableVRMode();
+        }
         if (isLocalPlayer)
         {
             switch (currentPlayerMode)
@@ -171,8 +175,17 @@ public class PlayerController : NetworkBehaviour
                 case PlayerMode.Observer: EnableLocalObserverMode(); break;
             }
         }
+        if (newPlayerMode == PlayerMode.VR)
+        {
+            EnableVRMode();
+        }
 
         UpdatePlayerDisplayAppearance(newPlayerMode);
+    }
+
+    private void EnableVRMode()
+    {
+        vrDisplayObj.SetActive(true);
     }
 
     private void EnableLocalVRMode()
@@ -187,14 +200,17 @@ public class PlayerController : NetworkBehaviour
         cubeScaleTransformSynchronizer = GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>();
 
         cubeScaleTransformSynchronizer.syncScaleFromServer = false;
-        vrDisplayObj.SetActive(true);
         vrDisplayObj.GetComponent<VRPlayerSynchronizer>().syncFromServer = false;
+    }
+
+    private void DisableVRMode()
+    {
+        vrDisplayObj.SetActive(false);
     }
 
     private void DisableLocalVRMode()
     {
         vrDisplayObj.GetComponent<VRPlayerSynchronizer>().syncFromServer = true;
-        vrDisplayObj.SetActive(false);
         cubeScaleTransformSynchronizer.syncScaleFromServer = true;
 
         if (vrEnvController != null)
