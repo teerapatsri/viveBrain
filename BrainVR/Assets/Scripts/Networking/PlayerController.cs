@@ -15,6 +15,7 @@ public class PlayerController : NetworkBehaviour
     public GameObject playerColorObj;
     public GameObject firstPersonObj;
     public Camera playerCamera;
+    public GameObject vrDisplayContainer;
 
     private GameObject startCameraObj;
     private GameObject observedPlayer;
@@ -51,10 +52,7 @@ public class PlayerController : NetworkBehaviour
         SetMainCameraAudioListenerEnableSafe(false);
         startCameraObj.SetActive(false);
 
-        // Try to open in VR mode
-        if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
-        else CmdSetPlayerMode(PlayerMode.FirstPerson);
-
+        vrEnvController = GameObject.FindGameObjectWithTag("VREnvironment").GetComponent<VREnvironmentController>();
         leftWand = vrEnvController.leftWand;
         rightWand = vrEnvController.rightWand;
         laserPointer = rightWand.GetComponent<SteamVR_LaserPointer>();
@@ -62,6 +60,10 @@ public class PlayerController : NetworkBehaviour
         OnLaserActiveChange(laserActive);
         OnLeftWandActiveChange(leftWandActive);
         OnRightWandActiveChange(rightWandActive);
+
+        // Try to open in VR mode
+        if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
+        else CmdSetPlayerMode(PlayerMode.FirstPerson);
 
         // CmdSetPlayerMode(PlayerMode.FirstPerson);
     }
@@ -235,6 +237,7 @@ public class PlayerController : NetworkBehaviour
 
     private void EnableVRMode()
     {
+        vrDisplayContainer.SetActive(true);
     }
 
     private void EnableLocalVRMode()
@@ -242,7 +245,6 @@ public class PlayerController : NetworkBehaviour
         playerCamera.enabled = false;
         playerCamera.GetComponent<AudioListener>().enabled = false;
 
-        vrEnvController = GameObject.FindGameObjectWithTag("VREnvironment").GetComponent<VREnvironmentController>();
         vrEnvController.EnableVR();
 
         vrCamera = vrEnvController.eyeCamera;
@@ -253,6 +255,7 @@ public class PlayerController : NetworkBehaviour
 
     private void DisableVRMode()
     {
+        vrDisplayContainer.SetActive(false);
     }
 
     private void DisableLocalVRMode()

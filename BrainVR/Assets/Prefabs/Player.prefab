@@ -1023,6 +1023,7 @@ MonoBehaviour:
   playerColorObj: {fileID: 1000011299907796}
   firstPersonObj: {fileID: 1000013579807174}
   playerCamera: {fileID: 20000010706673138}
+  vrDisplayContainer: {fileID: 1568584098057268}
   laserActive: 0
   rightWandActive: 0
   leftWandActive: 0
