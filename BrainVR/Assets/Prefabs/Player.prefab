@@ -1021,9 +1021,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerDisplay: {fileID: 1000011109169604}
   playerColorObj: {fileID: 1000011299907796}
+  vrDisplayObj: {fileID: 1568584098057268}
   firstPersonObj: {fileID: 1000013579807174}
   playerCamera: {fileID: 20000010706673138}
-  vrDisplayObj: {fileID: 1568584098057268}
 --- !u!114 &114322970662657748
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1055,7 +1055,7 @@ MonoBehaviour:
     i14: 12
     i15: 49
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114767944684410432
 MonoBehaviour:
   m_ObjectHideFlags: 1
