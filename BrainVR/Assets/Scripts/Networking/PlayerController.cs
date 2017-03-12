@@ -13,6 +13,7 @@ public class PlayerController : NetworkBehaviour
 
     public GameObject playerDisplay;
     public GameObject playerColorObj;
+    public GameObject vrDisplayObj;
     public GameObject firstPersonObj;
     public Camera playerCamera;
 
@@ -53,7 +54,7 @@ public class PlayerController : NetworkBehaviour
 
         // Try to open in VR mode
         if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
-        else CmdSetPlayerMode(PlayerMode.FirstPerson); 
+        else CmdSetPlayerMode(PlayerMode.FirstPerson);
 
         // CmdSetPlayerMode(PlayerMode.FirstPerson);
     }
@@ -186,10 +187,14 @@ public class PlayerController : NetworkBehaviour
         cubeScaleTransformSynchronizer = GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>();
 
         cubeScaleTransformSynchronizer.syncScaleFromServer = false;
+        vrDisplayObj.SetActive(true);
+        vrDisplayObj.GetComponent<VRPlayerSynchronizer>().syncFromServer = false;
     }
 
     private void DisableLocalVRMode()
     {
+        vrDisplayObj.GetComponent<VRPlayerSynchronizer>().syncFromServer = true;
+        vrDisplayObj.SetActive(false);
         cubeScaleTransformSynchronizer.syncScaleFromServer = true;
 
         if (vrEnvController != null)
