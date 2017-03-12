@@ -39,6 +39,11 @@ public class PlayerController : NetworkBehaviour
         UpdatePlayerDisplayAppearance();
     }
 
+    public override void OnStartServer()
+    {
+        vrDisplayObj.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
+    }
+
     public override void OnStartLocalPlayer()
     {
         isHost = CheckIsHost();
@@ -57,7 +62,6 @@ public class PlayerController : NetworkBehaviour
         else CmdSetPlayerMode(PlayerMode.FirstPerson);
 
         // CmdSetPlayerMode(PlayerMode.FirstPerson);
-        vrDisplayObj.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
     }
 
     private static bool CanEnableVRMode()
