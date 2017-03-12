@@ -84,7 +84,7 @@ public class VRPlayerSynchronizer : NetworkBehaviour
     {
         if (syncFromServer)
         {
-            rightWand.SetActive(isActive);
+            rightHandDisplay.SetActive(isActive);
         }
     }
 
@@ -92,7 +92,7 @@ public class VRPlayerSynchronizer : NetworkBehaviour
     {
         if (syncFromServer)
         {
-            leftWand.SetActive(isActive);
+            leftHandDisplay.SetActive(isActive);
         }
     }
 }
