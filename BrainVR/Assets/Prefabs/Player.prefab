@@ -214,8 +214,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4807644775358346}
-  - component: {fileID: 114322970662657748}
-  - component: {fileID: 114767944684410432}
   m_Layer: 0
   m_Name: VRDisplay
   m_TagString: Untagged
@@ -1023,41 +1021,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerDisplay: {fileID: 1000011109169604}
   playerColorObj: {fileID: 1000011299907796}
-  vrDisplayObj: {fileID: 1568584098057268}
   firstPersonObj: {fileID: 1000013579807174}
   playerCamera: {fileID: 20000010706673138}
---- !u!114 &114322970662657748
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1568584098057268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 3
-    i1: 220
-    i2: 190
-    i3: 94
-    i4: 135
-    i5: 68
-    i6: 196
-    i7: 68
-    i8: 251
-    i9: 172
-    i10: 46
-    i11: 142
-    i12: 94
-    i13: 150
-    i14: 12
-    i15: 49
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  laserActive: 0
+  rightWandActive: 0
+  leftWandActive: 0
+  leftHandDisplay: {fileID: 1933892366963858}
+  rightHandDisplay: {fileID: 1117408400363744}
+  laserBeamDisplay: {fileID: 1883656231338920}
 --- !u!114 &114502342927034636
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1077,24 +1048,6 @@ MonoBehaviour:
   m_MovementThreshold: 0.001
   m_InterpolateRotation: 0.5
   m_InterpolateMovement: 0.5
---- !u!114 &114767944684410432
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1568584098057268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6208c716244af0c419461039e3a376cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  laserActive: 0
-  rightWandActive: 0
-  leftWandActive: 0
-  leftHandDisplay: {fileID: 1933892366963858}
-  rightHandDisplay: {fileID: 1117408400363744}
-  laserBeamDisplay: {fileID: 1883656231338920}
-  syncFromServer: 1
 --- !u!114 &114772916717708960
 MonoBehaviour:
   m_ObjectHideFlags: 1

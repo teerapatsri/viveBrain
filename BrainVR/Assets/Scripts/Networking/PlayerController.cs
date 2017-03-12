@@ -13,7 +13,6 @@ public class PlayerController : NetworkBehaviour
 
     public GameObject playerDisplay;
     public GameObject playerColorObj;
-    public GameObject vrDisplayObj;
     public GameObject firstPersonObj;
     public Camera playerCamera;
 
@@ -39,11 +38,6 @@ public class PlayerController : NetworkBehaviour
         UpdatePlayerDisplayAppearance();
     }
 
-    public override void OnStartServer()
-    {
-        vrDisplayObj.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
-    }
-
     public override void OnStartLocalPlayer()
     {
         isHost = CheckIsHost();
@@ -60,6 +54,14 @@ public class PlayerController : NetworkBehaviour
         // Try to open in VR mode
         if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
         else CmdSetPlayerMode(PlayerMode.FirstPerson);
+
+        leftWand = vrEnvController.leftWand;
+        rightWand = vrEnvController.rightWand;
+        laserPointer = rightWand.GetComponent<SteamVR_LaserPointer>();
+
+        OnLaserActiveChange(laserActive);
+        OnLeftWandActiveChange(leftWandActive);
+        OnRightWandActiveChange(rightWandActive);
 
         // CmdSetPlayerMode(PlayerMode.FirstPerson);
     }
@@ -103,6 +105,49 @@ public class PlayerController : NetworkBehaviour
         {
             if (currentPlayerMode == PlayerMode.VR || currentPlayerMode == PlayerMode.FirstPerson) UpdatePlayerDisplayTransform();
             else if (currentPlayerMode == PlayerMode.Observer) UpdateObserveCamera();
+
+            if (currentPlayerMode == PlayerMode.VR)
+            {
+                // Left wand
+                if (leftWand.activeSelf)
+                {
+                    if (!leftWandActive) CmdSetLeftWandDisplayActive(true);
+                    leftHandDisplay.transform.position = leftWand.transform.position;
+                    leftHandDisplay.transform.rotation = leftWand.transform.rotation;
+                }
+                else
+                {
+                    if (leftWandActive) CmdSetLeftWandDisplayActive(false);
+                }
+
+                // Right wand
+                if (rightWand.activeSelf)
+                {
+                    if (!rightWandActive) CmdSetRightWandDisplayActive(true);
+                    rightHandDisplay.transform.position = rightWand.transform.position;
+                    rightHandDisplay.transform.rotation = rightWand.transform.rotation;
+                }
+                else
+                {
+                    if (rightWandActive) CmdSetRightWandDisplayActive(false);
+                }
+
+                // Laser pointer
+                if (rightWand.activeSelf && laserPointer.active)
+                {
+                    if (!laserActive) CmdSetLaserDisplayActive(true);
+                }
+                else
+                {
+                    if (laserActive) CmdSetLaserDisplayActive(false);
+                }
+            }
+            else
+            {
+                if (leftWandActive) CmdSetLeftWandDisplayActive(false);
+                if (rightWandActive) CmdSetRightWandDisplayActive(false);
+                if (laserActive) CmdSetLaserDisplayActive(false);
+            }
         }
     }
 
@@ -190,7 +235,6 @@ public class PlayerController : NetworkBehaviour
 
     private void EnableVRMode()
     {
-        vrDisplayObj.SetActive(true);
     }
 
     private void EnableLocalVRMode()
@@ -205,17 +249,14 @@ public class PlayerController : NetworkBehaviour
         cubeScaleTransformSynchronizer = GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>();
 
         cubeScaleTransformSynchronizer.syncScaleFromServer = false;
-        vrDisplayObj.GetComponent<VRPlayerSynchronizer>().syncFromServer = false;
     }
 
     private void DisableVRMode()
     {
-        vrDisplayObj.SetActive(false);
     }
 
     private void DisableLocalVRMode()
     {
-        vrDisplayObj.GetComponent<VRPlayerSynchronizer>().syncFromServer = true;
         cubeScaleTransformSynchronizer.syncScaleFromServer = true;
 
         if (vrEnvController != null)
@@ -291,5 +332,62 @@ public class PlayerController : NetworkBehaviour
         }
 
         playerColorObj.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", playerColor);
+    }
+
+    [SyncVar(hook = "OnLaserActiveChange")]
+    public bool laserActive;
+    [SyncVar(hook = "OnRightWandActiveChange")]
+    public bool rightWandActive;
+    [SyncVar(hook = "OnLeftWandActiveChange")]
+    public bool leftWandActive;
+
+    private GameObject leftWand;
+    private GameObject rightWand;
+    private SteamVR_LaserPointer laserPointer;
+
+    public GameObject leftHandDisplay;
+    public GameObject rightHandDisplay;
+    public GameObject laserBeamDisplay;
+
+    [Command]
+    private void CmdSetLeftWandDisplayActive(bool newValue)
+    {
+        leftWandActive = newValue;
+    }
+
+    [Command]
+    private void CmdSetRightWandDisplayActive(bool newValue)
+    {
+        rightWandActive = newValue;
+    }
+
+    [Command]
+    private void CmdSetLaserDisplayActive(bool newValue)
+    {
+        laserActive = newValue;
+    }
+
+    private void OnLaserActiveChange(bool isActive)
+    {
+        if (!isLocalPlayer)
+        {
+            laserBeamDisplay.SetActive(isActive);
+        }
+    }
+
+    private void OnRightWandActiveChange(bool isActive)
+    {
+        if (!isLocalPlayer)
+        {
+            rightHandDisplay.SetActive(isActive);
+        }
+    }
+
+    private void OnLeftWandActiveChange(bool isActive)
+    {
+        if (!isLocalPlayer)
+        {
+            leftHandDisplay.SetActive(isActive);
+        }
     }
 }
