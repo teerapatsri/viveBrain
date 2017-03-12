@@ -57,6 +57,7 @@ public class PlayerController : NetworkBehaviour
         else CmdSetPlayerMode(PlayerMode.FirstPerson);
 
         // CmdSetPlayerMode(PlayerMode.FirstPerson);
+        vrDisplayObj.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
     }
 
     private static bool CanEnableVRMode()
