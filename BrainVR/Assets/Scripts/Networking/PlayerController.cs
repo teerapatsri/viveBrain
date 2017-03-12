@@ -110,39 +110,7 @@ public class PlayerController : NetworkBehaviour
 
             if (currentPlayerMode == PlayerMode.VR)
             {
-                // Left wand
-                if (leftWand.activeSelf)
-                {
-                    if (!leftWandActive) CmdSetLeftWandDisplayActive(true);
-                    leftHandDisplay.transform.position = leftWand.transform.position;
-                    leftHandDisplay.transform.rotation = leftWand.transform.rotation;
-                }
-                else
-                {
-                    if (leftWandActive) CmdSetLeftWandDisplayActive(false);
-                }
-
-                // Right wand
-                if (rightWand.activeSelf)
-                {
-                    if (!rightWandActive) CmdSetRightWandDisplayActive(true);
-                    rightHandDisplay.transform.position = rightWand.transform.position;
-                    rightHandDisplay.transform.rotation = rightWand.transform.rotation;
-                }
-                else
-                {
-                    if (rightWandActive) CmdSetRightWandDisplayActive(false);
-                }
-
-                // Laser pointer
-                if (rightWand.activeSelf && laserPointer.active)
-                {
-                    if (!laserActive) CmdSetLaserDisplayActive(true);
-                }
-                else
-                {
-                    if (laserActive) CmdSetLaserDisplayActive(false);
-                }
+                SetVRDisplayParameters();
             }
             else
             {
@@ -150,6 +118,46 @@ public class PlayerController : NetworkBehaviour
                 if (rightWandActive) CmdSetRightWandDisplayActive(false);
                 if (laserActive) CmdSetLaserDisplayActive(false);
             }
+        } else
+        {
+            vrDisplayContainer.SetActive(currentPlayerMode == PlayerMode.VR);
+        }
+    }
+
+    private void SetVRDisplayParameters()
+    {
+        // Left wand
+        if (leftWand.activeSelf)
+        {
+            if (!leftWandActive) CmdSetLeftWandDisplayActive(true);
+            leftHandDisplay.transform.position = leftWand.transform.position;
+            leftHandDisplay.transform.rotation = leftWand.transform.rotation;
+        }
+        else
+        {
+            if (leftWandActive) CmdSetLeftWandDisplayActive(false);
+        }
+
+        // Right wand
+        if (rightWand.activeSelf)
+        {
+            if (!rightWandActive) CmdSetRightWandDisplayActive(true);
+            rightHandDisplay.transform.position = rightWand.transform.position;
+            rightHandDisplay.transform.rotation = rightWand.transform.rotation;
+        }
+        else
+        {
+            if (rightWandActive) CmdSetRightWandDisplayActive(false);
+        }
+
+        // Laser pointer
+        if (rightWand.activeSelf && laserPointer.active)
+        {
+            if (!laserActive) CmdSetLaserDisplayActive(true);
+        }
+        else
+        {
+            if (laserActive) CmdSetLaserDisplayActive(false);
         }
     }
 
@@ -237,7 +245,7 @@ public class PlayerController : NetworkBehaviour
 
     private void EnableVRMode()
     {
-        vrDisplayContainer.SetActive(true);
+        // vrDisplayContainer.SetActive(true);
     }
 
     private void EnableLocalVRMode()
@@ -255,7 +263,7 @@ public class PlayerController : NetworkBehaviour
 
     private void DisableVRMode()
     {
-        vrDisplayContainer.SetActive(false);
+        // vrDisplayContainer.SetActive(false);
     }
 
     private void DisableLocalVRMode()
