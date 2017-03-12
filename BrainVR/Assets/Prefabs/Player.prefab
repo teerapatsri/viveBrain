@@ -23,6 +23,8 @@ GameObject:
   - component: {fileID: 114000010132065796}
   - component: {fileID: 114000013965771004}
   - component: {fileID: 114000011727264922}
+  - component: {fileID: 114772916717708960}
+  - component: {fileID: 114502342927034636}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1055,7 +1057,26 @@ MonoBehaviour:
     i14: 12
     i15: 49
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 1
+  m_LocalPlayerAuthority: 0
+--- !u!114 &114502342927034636
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010192143212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1267208747, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Target: {fileID: 4297016553954236}
+  m_ChildIndex: 2
+  m_SendInterval: 0.1
+  m_SyncRotationAxis: 7
+  m_RotationSyncCompression: 0
+  m_MovementThreshold: 0.001
+  m_InterpolateRotation: 0.5
+  m_InterpolateMovement: 0.5
 --- !u!114 &114767944684410432
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1067,10 +1088,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6208c716244af0c419461039e3a376cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  laserActive: 0
+  rightWandActive: 0
+  leftWandActive: 0
   leftHandDisplay: {fileID: 1933892366963858}
   rightHandDisplay: {fileID: 1117408400363744}
   laserBeamDisplay: {fileID: 1883656231338920}
   syncFromServer: 1
+--- !u!114 &114772916717708960
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010192143212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1267208747, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Target: {fileID: 4210395096106334}
+  m_ChildIndex: 1
+  m_SendInterval: 0.1
+  m_SyncRotationAxis: 7
+  m_RotationSyncCompression: 0
+  m_MovementThreshold: 0.001
+  m_InterpolateRotation: 0.5
+  m_InterpolateMovement: 0.5
 --- !u!124 &124000013268563434
 Behaviour:
   m_ObjectHideFlags: 1

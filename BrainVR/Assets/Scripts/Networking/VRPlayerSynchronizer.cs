@@ -6,11 +6,11 @@ using UnityEngine.Networking;
 public class VRPlayerSynchronizer : NetworkBehaviour
 {
     [SyncVar(hook = "OnLaserActiveChange")]
-    private bool laserActive;
+    public bool laserActive;
     [SyncVar(hook = "OnRightWandActiveChange")]
-    private bool rightWandActive;
+    public bool rightWandActive;
     [SyncVar(hook = "OnLeftWandActiveChange")]
-    private bool leftWandActive;
+    public bool leftWandActive;
 
     // [SyncVar]
 
@@ -44,32 +44,58 @@ public class VRPlayerSynchronizer : NetworkBehaviour
     {
         if (!syncFromServer)
         {
-            SetHandDisplay(leftWand, leftHandDisplay, ref leftWandActive);
-            SetHandDisplay(rightWand, rightHandDisplay, ref rightWandActive);
-
-            if (rightWand.activeSelf && laserPointer.active)
+            // Left wand
+            if (leftWand.activeSelf)
             {
-                if (!laserActive) laserActive = true;
+                if (!leftWandActive) CmdSetLeftWandDisplayActive(true);
+                leftHandDisplay.transform.position = leftWand.transform.position;
+                leftHandDisplay.transform.rotation = leftWand.transform.rotation;
             }
             else
             {
-                if (laserActive) laserActive = false;
+                if (leftWandActive) CmdSetLeftWandDisplayActive(false);
+            }
+
+            // Right wand
+            if (rightWand.activeSelf)
+            {
+                if (!rightWandActive) CmdSetRightWandDisplayActive(true);
+                rightHandDisplay.transform.position = rightWand.transform.position;
+                rightHandDisplay.transform.rotation = rightWand.transform.rotation;
+            }
+            else
+            {
+                if (leftWandActive) CmdSetRightWandDisplayActive(false);
+            }
+
+            // Laser pointer
+            if (rightWand.activeSelf && laserPointer.active)
+            {
+                if (!laserActive) CmdSetLaserDisplayActive(true);
+            }
+            else
+            {
+                if (laserActive) CmdSetLaserDisplayActive(false);
             }
         }
     }
 
-    private void SetHandDisplay(GameObject wand, GameObject display, ref bool displayActive)
+    [Command]
+    private void CmdSetLeftWandDisplayActive(bool newValue)
     {
-        if (wand.activeSelf)
-        {
-            if (!displayActive) displayActive = true;
-            display.transform.position = wand.transform.position;
-            display.transform.rotation = wand.transform.rotation;
-        }
-        else
-        {
-            if (displayActive) displayActive = false;
-        }
+        leftWandActive = newValue;
+    }
+
+    [Command]
+    private void CmdSetRightWandDisplayActive(bool newValue)
+    {
+        rightWandActive = newValue;
+    }
+
+    [Command]
+    private void CmdSetLaserDisplayActive(bool newValue)
+    {
+        laserActive = newValue;
     }
 
     private void OnLaserActiveChange(bool isActive)
