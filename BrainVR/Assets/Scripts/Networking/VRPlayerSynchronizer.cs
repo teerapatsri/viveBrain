@@ -34,6 +34,10 @@ public class VRPlayerSynchronizer : NetworkBehaviour
         leftWand = vrEnvController.leftWand;
         rightWand = vrEnvController.rightWand;
         laserPointer = rightWand.GetComponent<SteamVR_LaserPointer>();
+
+        OnLaserActiveChange(laserActive);
+        OnLeftWandActiveChange(leftWandActive);
+        OnRightWandActiveChange(rightWandActive);
     }
 
     public void LateUpdate()
@@ -43,7 +47,7 @@ public class VRPlayerSynchronizer : NetworkBehaviour
             SetHandDisplay(leftWand, leftHandDisplay, ref leftWandActive);
             SetHandDisplay(rightWand, rightHandDisplay, ref rightWandActive);
 
-            if (rightHandDisplay.activeSelf && laserPointer.active)
+            if (rightWand.activeSelf && laserPointer.active)
             {
                 if (!laserActive) laserActive = true;
             }
