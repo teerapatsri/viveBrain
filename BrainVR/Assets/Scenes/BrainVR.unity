@@ -9524,6 +9524,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vrContainerObj: {fileID: 1247347003}
   cubeObj: {fileID: 1980090527}
+  leftWand: {fileID: 1715283588}
+  rightWand: {fileID: 1715283587}
+  eyeCamera: {fileID: 1715283603}
 --- !u!1 &556944423
 GameObject:
   m_ObjectHideFlags: 0

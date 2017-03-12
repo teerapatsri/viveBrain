@@ -16,9 +16,11 @@ public class PlayerController : NetworkBehaviour
     public GameObject firstPersonObj;
     public Camera playerCamera;
 
+    private GameObject startCameraObj;
     private GameObject observedPlayer;
-
     private VREnvironmentController vrEnvController;
+    private Camera vrCamera;
+    private CubeScaleTransformSynchronizer cubeScaleTransformSynchronizer;
 
     enum PlayerMode { FirstPerson, VR, Observer, Unknown };
 
@@ -29,8 +31,6 @@ public class PlayerController : NetworkBehaviour
     bool isHost = false;
 
     bool isBeingObserved = false;
-
-    private Camera vrCamera;
 
     public override void OnStartClient()
     {
@@ -43,11 +43,13 @@ public class PlayerController : NetworkBehaviour
         isHost = CheckIsHost();
         if (isHost) Debug.Log("Current player is a host.");
 
+        startCameraObj = GameObject.Find("Start Camera");
+
         // Set up current camera
         playerCamera.enabled = true;
         playerCamera.GetComponent<AudioListener>().enabled = true;
         SetMainCameraAudioListenerEnableSafe(false);
-        GetStartCameraObject().SetActive(false);
+        startCameraObj.SetActive(false);
 
         // Try to open in VR mode
         if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
@@ -129,14 +131,14 @@ public class PlayerController : NetworkBehaviour
                 case PlayerMode.Observer: DisableLocalObserverMode(); break;
             }
 
-            GetStartCameraObject().SetActive(true);
+            startCameraObj.SetActive(true);
             SetMainCameraAudioListenerEnableSafe(true);
         }
     }
 
-    private static void SetMainCameraAudioListenerEnableSafe(bool enable)
+    private void SetMainCameraAudioListenerEnableSafe(bool enable)
     {
-        var mcal = GetMainCameraAudioListener();
+        var mcal = startCameraObj.GetComponent<AudioListener>();
         if (mcal != null)
         {
             mcal.enabled = enable;
@@ -180,13 +182,16 @@ public class PlayerController : NetworkBehaviour
         vrEnvController = GameObject.FindGameObjectWithTag("VREnvironment").GetComponent<VREnvironmentController>();
         vrEnvController.EnableVR();
 
-        vrCamera = GameObject.Find("Camera (eye)").GetComponent<Camera>();
+        vrCamera = vrEnvController.eyeCamera;
+        cubeScaleTransformSynchronizer = GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>();
 
-        GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>().syncScaleFromServer = false;
+        cubeScaleTransformSynchronizer.syncScaleFromServer = false;
     }
 
     private void DisableLocalVRMode()
     {
+        cubeScaleTransformSynchronizer.syncScaleFromServer = true;
+
         if (vrEnvController != null)
         {
             vrEnvController.DisableVR();
@@ -195,8 +200,6 @@ public class PlayerController : NetworkBehaviour
 
         playerCamera.enabled = true;
         playerCamera.GetComponent<AudioListener>().enabled = true;
-
-        GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>().syncScaleFromServer = true;
     }
 
     private void EnableLocalFirstPersonMode()
@@ -262,15 +265,5 @@ public class PlayerController : NetworkBehaviour
         }
 
         playerColorObj.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", playerColor);
-    }
-
-    private static AudioListener GetMainCameraAudioListener()
-    {
-        return GetStartCameraObject().GetComponent<AudioListener>();
-    }
-
-    private static GameObject GetStartCameraObject()
-    {
-        return GameObject.Find("Start Camera");
     }
 }

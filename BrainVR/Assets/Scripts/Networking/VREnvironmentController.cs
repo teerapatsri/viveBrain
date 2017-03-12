@@ -6,6 +6,9 @@ public class VREnvironmentController : MonoBehaviour
 {
     public GameObject vrContainerObj;
     public GameObject cubeObj;
+    public GameObject leftWand;
+    public GameObject rightWand;
+    public Camera eyeCamera;
 
     public void Start()
     {
