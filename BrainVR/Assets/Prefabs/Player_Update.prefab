@@ -1210,7 +1210,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1662603140418750}
-  m_LocalRotation: {x: 0.000000010399563, y: 0.0000002381917, z: -0.043619383, w: 0.99904823}
+  m_LocalRotation: {x: 0.000000010468468, y: 0.0000002397699, z: -0.043908395, w: 0.99903554}
   m_LocalPosition: {x: -0.013221314, y: -0.0011474581, z: -9.460564e-12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1350,7 +1350,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1021633891036226}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.8701422, y: -0.01, z: 1.8328785}
+  m_LocalPosition: {x: 2.341589, y: -0.01, z: 1.0074631}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4771349228759144}
@@ -1597,7 +1597,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -1787,7 +1787,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1542354744051900}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ca30c36b506c64aafa127f12f968fa, type: 3}
   m_Name: 
@@ -1797,7 +1797,7 @@ MonoBehaviour:
   m_jumpForce: 4
   m_animator: {fileID: 95875530394500938}
   m_rigidBody: {fileID: 54754422036326898}
-  m_controlMode: 0
+  m_controlMode: 1
 --- !u!114 &114878477516792246
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1810,6 +1810,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerDisplay: {fileID: 1342790748547128}
+  playerDisplayCharacter: {fileID: 1542354744051900}
+  playerDisplayNeck: {fileID: 1662603140418750}
   playerColorObj: {fileID: 1196596089596058}
   firstPersonObj: {fileID: 1245645870374678}
   playerCamera: {fileID: 20703451706040636}

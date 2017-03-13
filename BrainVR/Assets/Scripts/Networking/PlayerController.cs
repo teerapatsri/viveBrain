@@ -12,6 +12,8 @@ public class PlayerController : NetworkBehaviour
     const float playerDisplayYOffset = 0.5f;
 
     public GameObject playerDisplay;
+    public GameObject playerDisplayCharacter;
+    public GameObject playerDisplayNeck;
     public GameObject playerColorObj;
     public GameObject firstPersonObj;
     public Camera playerCamera;
@@ -31,6 +33,12 @@ public class PlayerController : NetworkBehaviour
     bool isBeingObserved = false;
 
     private Camera vrCamera;
+
+    void Start()
+    {
+        Quaternion lastPlayerDisplayNeckRotation = playerDisplayNeck.transform.rotation;
+        Debug.Log(lastPlayerDisplayNeckRotation);
+    }
 
     public override void OnStartClient()
     {
@@ -103,8 +111,24 @@ public class PlayerController : NetworkBehaviour
         Vector3 playerPosition = currentPlayerMode == PlayerMode.VR ? vrCamera.transform.position : firstPersonObj.transform.position;
         playerDisplay.transform.position = new Vector3(playerPosition.x, playerPosition.y + playerDisplayYOffset, playerPosition.z);
 
-        Quaternion playerRotation = currentPlayerMode == PlayerMode.VR ? vrCamera.transform.rotation : playerCamera.transform.rotation;
-        playerDisplay.transform.rotation = new Quaternion(playerRotation.x, playerRotation.y, playerRotation.z, playerRotation.w);
+        Quaternion cameraRotation = currentPlayerMode == PlayerMode.VR ? vrCamera.transform.rotation : playerCamera.transform.rotation;
+        Quaternion lastPlayerDisplayCharacterRotation = playerDisplayCharacter.transform.rotation;
+        
+        playerDisplayCharacter.transform.rotation = new Quaternion(lastPlayerDisplayCharacterRotation.x, cameraRotation.y, lastPlayerDisplayCharacterRotation.z, lastPlayerDisplayCharacterRotation.w);
+        
+        // Constraint cameraRotation.z
+        float playerNeckRotationZ = cameraRotation.z;
+        if (playerNeckRotationZ > 40.0f) 
+        {
+            playerNeckRotationZ = 40.0f;
+        } 
+        else if (playerNeckRotationZ < -50.0f) 
+        {
+            playerNeckRotationZ = -50.0f;
+        }
+
+        Quaternion lastPlayerDisplayNeckRotation = playerDisplayNeck.transform.rotation;
+        playerDisplayNeck.transform.rotation = new Quaternion(lastPlayerDisplayNeckRotation.x, lastPlayerDisplayNeckRotation.y, playerNeckRotationZ, lastPlayerDisplayNeckRotation.w);
     }
 
     private void UpdateObserveCamera()
