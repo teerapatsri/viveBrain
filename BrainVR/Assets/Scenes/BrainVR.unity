@@ -9162,7 +9162,7 @@ GameObject:
   - component: {fileID: 413230963}
   m_Layer: 0
   m_Name: Start Camera
-  m_TagString: Untagged
+  m_TagString: StartCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

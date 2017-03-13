@@ -21,10 +21,13 @@ GameObject:
   - component: {fileID: 4000013316716836}
   - component: {fileID: 114000010911700094}
   - component: {fileID: 114000010132065796}
-  - component: {fileID: 114000013965771004}
   - component: {fileID: 114000011727264922}
   - component: {fileID: 114772916717708960}
   - component: {fileID: 114502342927034636}
+  - component: {fileID: 114000013965771004}
+  - component: {fileID: 114734473283626964}
+  - component: {fileID: 114114589411362528}
+  - component: {fileID: 114003610204327964}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -68,7 +71,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000011109169604
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,7 +316,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010192143212}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.145544, y: 0.09, z: 0.7831809}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4000010063452904}
@@ -452,7 +455,7 @@ Camera:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010494505774}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0.019607844}
@@ -741,7 +744,7 @@ AudioListener:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010494505774}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!82 &82000010807061154
 AudioSource:
   m_ObjectHideFlags: 1
@@ -1019,17 +1022,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f9ad87761cc729439a893ea05f4e762, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vrPlayerController: {fileID: 114734473283626964}
+  firstPersonPlayerController: {fileID: 114003610204327964}
+  observerPlayerController: {fileID: 114114589411362528}
   playerDisplay: {fileID: 1000011109169604}
   playerColorObj: {fileID: 1000011299907796}
-  firstPersonObj: {fileID: 1000013579807174}
   playerCamera: {fileID: 20000010706673138}
-  vrDisplayContainer: {fileID: 1568584098057268}
-  laserActive: 0
-  rightWandActive: 0
-  leftWandActive: 0
-  leftHandDisplay: {fileID: 1933892366963858}
-  rightHandDisplay: {fileID: 1117408400363744}
-  laserBeamDisplay: {fileID: 1883656231338920}
+--- !u!114 &114003610204327964
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010192143212}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3ecac97d13c7df47aefcf68a0a41e95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstPersonObj: {fileID: 1000013579807174}
+  playerDisplay: {fileID: 1000011109169604}
+  playerCameraObj: {fileID: 1000010494505774}
+  firstPersonController: {fileID: 114000010947531280}
+--- !u!114 &114114589411362528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010192143212}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c4f63690550b1249aaa02866372da11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCamera: {fileID: 20000010706673138}
 --- !u!114 &114502342927034636
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1049,6 +1074,22 @@ MonoBehaviour:
   m_MovementThreshold: 0.001
   m_InterpolateRotation: 0.5
   m_InterpolateMovement: 0.5
+--- !u!114 &114734473283626964
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010192143212}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c23526faac29bc4096e5e4bcc13e76b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftHandDisplay: {fileID: 1933892366963858}
+  rightHandDisplay: {fileID: 1117408400363744}
+  laserBeamDisplay: {fileID: 1883656231338920}
+  vrDisplayContainer: {fileID: 1568584098057268}
+  playerDisplay: {fileID: 1000011109169604}
 --- !u!114 &114772916717708960
 MonoBehaviour:
   m_ObjectHideFlags: 1
