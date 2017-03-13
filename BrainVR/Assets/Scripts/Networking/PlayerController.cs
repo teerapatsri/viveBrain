@@ -127,8 +127,9 @@ public class PlayerController : NetworkBehaviour
             playerNeckRotationZ = -50.0f;
         }
 
-        Quaternion lastPlayerDisplayNeckRotation = playerDisplayNeck.transform.rotation;
-        playerDisplayNeck.transform.rotation = new Quaternion(lastPlayerDisplayNeckRotation.x, lastPlayerDisplayNeckRotation.y, playerNeckRotationZ, lastPlayerDisplayNeckRotation.w);
+        // Quaternion lastPlayerDisplayNeckRotation = playerDisplayNeck.transform.rotation;
+        // playerDisplayNeck.transform.rotation = new Quaternion(lastPlayerDisplayNeckRotation.x, lastPlayerDisplayNeckRotation.y, playerNeckRotationZ, lastPlayerDisplayNeckRotation.w);
+        // Debug.Log(playerDisplayNeck.transform.rotation);
     }
 
     private void UpdateObserveCamera()

@@ -17,6 +17,8 @@ public class SimpleCharacterControl : MonoBehaviour {
 
     [SerializeField] private ControlMode m_controlMode = ControlMode.Direct;
 
+    private Vector3 m_currentPosition;
+
     private float m_currentV = 0;
     private float m_currentH = 0;
 
@@ -31,8 +33,24 @@ public class SimpleCharacterControl : MonoBehaviour {
     private float m_jumpTimeStamp = 0;
     private float m_minJumpInterval = 0.25f;
 
+    private float directionMagnitudeThreshold = 0.1f;
+
     private bool m_isGrounded;
     private List<Collider> m_collisions = new List<Collider>();
+
+    private GameObject associatedPlayer;
+    private GameObject associatedPlayerDisplay;
+
+    private PlayerController playerControllerScript;
+
+    void Start()
+    {
+        associatedPlayer = this.transform.parent.gameObject.transform.parent.gameObject; // Its associated player
+        playerControllerScript = associatedPlayer.GetComponent<PlayerController>();
+        associatedPlayerDisplay = playerControllerScript.playerDisplay;
+        m_currentPosition = associatedPlayerDisplay.transform.position;
+        // Debug.Log("Current Position: " + m_currentPosition);
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -136,34 +154,21 @@ public class SimpleCharacterControl : MonoBehaviour {
 
     private void DirectUpdate()
     {
-        float v = Input.GetAxis("Vertical");
-        float h = Input.GetAxis("Horizontal");
-
-        Transform camera = Camera.main.transform;
-
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (playerControllerScript.isLocalPlayer) 
         {
-            v *= m_walkScale;
-            h *= m_walkScale;
-        }
-
-        m_currentV = Mathf.Lerp(m_currentV, v, Time.deltaTime * m_interpolation);
-        m_currentH = Mathf.Lerp(m_currentH, h, Time.deltaTime * m_interpolation);
-
-        Vector3 direction = camera.forward * m_currentV + camera.right * m_currentH;
-
-        float directionLength = direction.magnitude;
-        direction.y = 0;
-        direction = direction.normalized * directionLength;
-
-        if(direction != Vector3.zero)
-        {
-            m_currentDirection = Vector3.Slerp(m_currentDirection, direction, Time.deltaTime * m_interpolation);
-
-            transform.rotation = Quaternion.LookRotation(m_currentDirection);
-            transform.position += m_currentDirection * m_moveSpeed * Time.deltaTime;
-
-            m_animator.SetFloat("MoveSpeed", direction.magnitude);
+            Vector3 newPosition = associatedPlayerDisplay.transform.position;
+            Vector3 direction = newPosition - m_currentPosition;
+            if (direction.magnitude > directionMagnitudeThreshold) 
+            {
+                m_currentDirection = direction;
+                m_currentPosition = newPosition;
+                m_animator.SetFloat("MoveSpeed", 1.2f * direction.magnitude);
+            }
+            else
+            {
+                m_currentDirection = Vector3.zero; 
+                m_animator.SetFloat("MoveSpeed", 0.0f);
+            }
         }
 
         JumpingAndLanding();
