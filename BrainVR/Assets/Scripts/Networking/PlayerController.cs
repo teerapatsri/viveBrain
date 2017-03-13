@@ -112,24 +112,19 @@ public class PlayerController : NetworkBehaviour
         playerDisplay.transform.position = new Vector3(playerPosition.x, playerPosition.y + playerDisplayYOffset, playerPosition.z);
 
         Quaternion cameraRotation = currentPlayerMode == PlayerMode.VR ? vrCamera.transform.rotation : playerCamera.transform.rotation;
-        Quaternion lastPlayerDisplayCharacterRotation = playerDisplayCharacter.transform.rotation;
+        var lastPlayerDisplayCharacterRotation = playerDisplayCharacter.transform.rotation.eulerAngles;
         
-        playerDisplayCharacter.transform.rotation = new Quaternion(lastPlayerDisplayCharacterRotation.x, cameraRotation.y, lastPlayerDisplayCharacterRotation.z, lastPlayerDisplayCharacterRotation.w);
-        
-        // Constraint cameraRotation.z
-        float playerNeckRotationZ = cameraRotation.z;
-        if (playerNeckRotationZ > 40.0f) 
-        {
-            playerNeckRotationZ = 40.0f;
-        } 
-        else if (playerNeckRotationZ < -50.0f) 
-        {
-            playerNeckRotationZ = -50.0f;
-        }
+        playerDisplayCharacter.transform.rotation = Quaternion.Euler(lastPlayerDisplayCharacterRotation.x, cameraRotation.eulerAngles.y, lastPlayerDisplayCharacterRotation.z);
 
-        // Quaternion lastPlayerDisplayNeckRotation = playerDisplayNeck.transform.rotation;
-        // playerDisplayNeck.transform.rotation = new Quaternion(lastPlayerDisplayNeckRotation.x, lastPlayerDisplayNeckRotation.y, playerNeckRotationZ, lastPlayerDisplayNeckRotation.w);
-        // Debug.Log(playerDisplayNeck.transform.rotation);
+        // Constraint cameraRotation.z
+        float playerNeckRotation = cameraRotation.eulerAngles.x;
+        if (playerNeckRotation >= 180)
+        {
+            playerNeckRotation -= 360;
+        }
+        playerNeckRotation = Mathf.Clamp(-playerNeckRotation, -50.0f, 40.0f);
+
+        playerDisplayNeck.transform.localRotation = Quaternion.Euler(0, 0, playerNeckRotation);
     }
 
     private void UpdateObserveCamera()
