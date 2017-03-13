@@ -27,7 +27,7 @@ public class FirstPersonPlayerController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            Vector3 playerPosition = firstPersonObj.transform.position;
+            Vector3 playerPosition = playerCameraObj.transform.position;
             playerDisplay.transform.position = new Vector3(playerPosition.x, playerPosition.y, playerPosition.z);
 
             Quaternion playerRotation = playerCameraObj.transform.rotation;

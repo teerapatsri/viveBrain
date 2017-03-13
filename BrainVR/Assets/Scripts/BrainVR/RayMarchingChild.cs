@@ -20,7 +20,7 @@ public class RayMarchingChild : MonoBehaviour
         cameraObj.depthTextureMode = DepthTextureMode.Depth;
         
         // Turn off UI culling mask (set via master controller)
-        // cameraObj.cullingMask &= ~(controller.uiLayer);
+        cameraObj.cullingMask &= ~(controller.uiLayer);
     }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)

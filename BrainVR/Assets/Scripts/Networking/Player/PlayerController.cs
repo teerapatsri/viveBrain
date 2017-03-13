@@ -27,10 +27,13 @@ public class PlayerController : NetworkBehaviour
     {
         get
         {
-            return _isBeingObserved;
+            return _isHost;
         }
     }
 
+    /// <summary>
+    /// Whether this player is being observed, i.e. player on current machine is observing this player.
+    /// </summary>
     public bool IsBeingObserved
     {
         get
