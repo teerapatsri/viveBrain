@@ -6,19 +6,25 @@ using UnityEngine.Networking;
 
 public class ObserverPlayerController : NetworkBehaviour
 {
-    public Camera playerCamera;
+    public GameObject playerCameraObj;
 
     private GameObject observedPlayer;
 
     private void OnEnable()
     {
+        // Find player to observe
         observedPlayer = FindObservablePlayer();
-        var playerController = observedPlayer.GetComponent<PlayerController>();
-        playerController.IsBeingObserved = true;
+        // Set that player as being observed
+        observedPlayer.GetComponent<PlayerController>().IsBeingObserved = true;
+
+        playerCameraObj.SetActive(true);
     }
 
     private void OnDisable()
     {
+        playerCameraObj.SetActive(false);
+
+        // Set that player as not being observed
         if (observedPlayer != null)
         {
             var playerController = observedPlayer.GetComponent<PlayerController>();
@@ -33,8 +39,8 @@ public class ObserverPlayerController : NetworkBehaviour
         {
             GameObject targetDisplay = observedPlayer.GetComponent<PlayerController>().playerDisplay;
             Transform t = targetDisplay.transform;
-            playerCamera.transform.position = new Vector3(t.position.x, t.position.y, t.position.z);
-            playerCamera.transform.rotation = new Quaternion(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w);
+            playerCameraObj.transform.position = new Vector3(t.position.x, t.position.y, t.position.z);
+            playerCameraObj.transform.rotation = new Quaternion(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w);
         }
     }
 
