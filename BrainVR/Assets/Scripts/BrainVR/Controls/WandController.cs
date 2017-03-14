@@ -29,7 +29,7 @@ public class WandController : MonoBehaviour
 
 
     private RadialMenu menuSpawned;
-    private bool gripEnabled, trigEnabled, menuEnabled, padEnabled;
+    private bool gripEnabled = true, trigEnabled = true, menuEnabled = true, padEnabled = true;
     private bool trigger;
     private bool grip;
     private bool showMenu;
@@ -53,7 +53,7 @@ public class WandController : MonoBehaviour
         trackedObj = GetComponent<SteamVR_TrackedObject>();
         laser = GetComponent<SteamVR_LaserPointer>();
         audioSource = GetComponent<AudioSource>();
-        if(laser != null)
+        if (laser != null)
         {
             laser.active = false;
         }
@@ -61,11 +61,6 @@ public class WandController : MonoBehaviour
         controllingPlane = false;
         grip = false;
         showMenu = false;
-
-        gripEnabled = true;
-        trigEnabled = true;
-        menuEnabled = true;
-        padEnabled = true;
     }
 
     // Update is called once per frame
@@ -118,7 +113,7 @@ public class WandController : MonoBehaviour
             }
             else if (CompareTag("RightWand"))//NORMAL mode
             {
-                if(grip == false)
+                if (grip == false)
                 {
                     audioSource.clip = audioclips[4];
                     audioSource.Play();
@@ -132,7 +127,7 @@ public class WandController : MonoBehaviour
         if (controller.GetPress(gripButton) && grip)
         {
             if (audioSource.isPlaying) return;
-            audioSource.clip = audioclips[Random.Range(2,4)];
+            audioSource.clip = audioclips[Random.Range(2, 4)];
             audioSource.Play();
         }
         if (controller.GetPressUp(gripButton))
@@ -228,7 +223,7 @@ public class WandController : MonoBehaviour
             }
 
         }
-        else if (controller.GetTouchDown(padButton) &&padEnabled && menuSpawned == null)
+        else if (controller.GetTouchDown(padButton) && padEnabled && menuSpawned == null)
         {
             interactableController.BeginRotate(this);
             prevAxis = controller.GetAxis();
