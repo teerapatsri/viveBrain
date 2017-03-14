@@ -125,10 +125,6 @@ public class PlayerController : NetworkBehaviour
                 firstPersonPlayerController.enabled = false;
                 break;
             case PlayerMode.VR:
-                if (IsHost)
-                {
-                    vrPlayerController.SetAsHost();
-                }
                 vrPlayerController.enabled = false;
                 break;
             case PlayerMode.Observer:
@@ -152,6 +148,10 @@ public class PlayerController : NetworkBehaviour
                 firstPersonPlayerController.enabled = true;
                 break;
             case PlayerMode.VR:
+                if (IsHost)
+                {
+                    vrPlayerController.SetAsHost();
+                }
                 vrPlayerController.enabled = true;
                 break;
             case PlayerMode.Observer:

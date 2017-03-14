@@ -7,6 +7,7 @@ public class CubeScaleTransformSynchronizer : NetworkBehaviour
     [SyncVar(hook = "OnCurrentScalingChange")]
     Vector3 currentScaling;
 
+    [HideInInspector]
     public bool syncScaleFromServer = true;
 
     public void Start()

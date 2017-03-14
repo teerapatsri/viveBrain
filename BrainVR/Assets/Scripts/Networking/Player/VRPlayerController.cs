@@ -63,7 +63,6 @@ public class VRPlayerController : NetworkBehaviour
                 rCtrl.GripDisable();
                 rCtrl.MenuDisable();
                 rCtrl.PadDisable();
-
             }
         }
 
