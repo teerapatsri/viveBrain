@@ -59,6 +59,8 @@ public class PlayerController : NetworkBehaviour
 
         // Set up player appearance
         UpdatePlayerDisplayAppearance(currentPlayerMode);
+
+        OnPlayerModeChange(currentPlayerMode);
     }
 
     public override void OnStartLocalPlayer()
