@@ -26,17 +26,13 @@ public class VRPlayerController : NetworkBehaviour
     private GameObject rightWand;
     private SteamVR_LaserPointer laserPointer;
 
-    private void Start()
+    private void Awake()
     {
-        if (isLocalPlayer)
-        {
-            vrEnvController = GameObject.FindGameObjectWithTag("VREnvironment").GetComponent<VREnvironmentController>();
-            vrCamera = vrEnvController.eyeCamera;
-            leftWand = vrEnvController.leftWand;
-            rightWand = vrEnvController.rightWand;
-            laserPointer = rightWand.GetComponent<SteamVR_LaserPointer>();
-        }
-
+        vrEnvController = GameObject.FindGameObjectWithTag("VREnvironment").GetComponent<VREnvironmentController>();
+        vrCamera = vrEnvController.eyeCamera;
+        leftWand = vrEnvController.leftWand;
+        rightWand = vrEnvController.rightWand;
+        laserPointer = rightWand.GetComponent<SteamVR_LaserPointer>();
         cubeScaleTransformSynchronizer = GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>();
     }
 

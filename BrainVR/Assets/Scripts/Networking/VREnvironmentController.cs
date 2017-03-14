@@ -13,9 +13,9 @@ public class VREnvironmentController : MonoBehaviour
     public void Start()
     {
         // TODO: uncomment these
-        /* string[] supportedDevices = VRSettings.supportedDevices.Where(deviceName => deviceName != "None").ToArray();
+        string[] supportedDevices = VRSettings.supportedDevices.Where(deviceName => deviceName != "None").ToArray();
         Debug.Log("Using VR Device: " + string.Join(", ", supportedDevices));
-        VRSettings.LoadDeviceByName(supportedDevices); */
+        VRSettings.LoadDeviceByName(supportedDevices);
     }
 
     public void EnableVR()
@@ -40,8 +40,8 @@ public class VREnvironmentController : MonoBehaviour
 
     public void DisableVR()
     {
-        vrContainerObj.SetActive(false);
-        cubeObj.GetComponent<Interactable>().enabled = false;
+        if(vrContainerObj) vrContainerObj.SetActive(false);
+        if (cubeObj) cubeObj.GetComponent<Interactable>().enabled = false;
 
         VRSettings.enabled = false;
     }
