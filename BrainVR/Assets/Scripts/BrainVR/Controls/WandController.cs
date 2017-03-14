@@ -29,7 +29,7 @@ public class WandController : MonoBehaviour
 
 
     private RadialMenu menuSpawned;
-    private bool gripEnabled, trigEnabled, menuEnabled;
+    private bool gripEnabled, trigEnabled, menuEnabled, padEnabled;
     private bool trigger;
     private bool grip;
     private bool showMenu;
@@ -65,6 +65,7 @@ public class WandController : MonoBehaviour
         gripEnabled = true;
         trigEnabled = true;
         menuEnabled = true;
+        padEnabled = true;
     }
 
     // Update is called once per frame
@@ -147,7 +148,7 @@ public class WandController : MonoBehaviour
             interactableController.EndGrab(this);
             grip = false;
         }
-        if (controller.GetPressDown(padButton)) //show menu and pressing menu
+        if (controller.GetPressDown(padButton) && padEnabled) //show menu and pressing menu
         {
             Debug.Log("Option: " + option);
             GameObject cubeObj = GameObject.Find("Cube");
@@ -197,7 +198,7 @@ public class WandController : MonoBehaviour
             }
         }
         // && (controller.GetAxis().x != 0 || controller.GetAxis().y != 0)
-        if (controller.GetTouch(padButton) && menuSpawned != null)//locate thumb on pad
+        if (controller.GetTouch(padButton) && padEnabled && menuSpawned != null)//locate thumb on pad
         {
             Vector2 pos = new Vector2(controller.GetAxis().x, controller.GetAxis().y);
             float radius = pos.magnitude;
@@ -227,12 +228,12 @@ public class WandController : MonoBehaviour
             }
 
         }
-        else if (controller.GetTouchDown(padButton) && menuSpawned == null)
+        else if (controller.GetTouchDown(padButton) &&padEnabled && menuSpawned == null)
         {
             interactableController.BeginRotate(this);
             prevAxis = controller.GetAxis();
         }
-        if (controller.GetTouch(padButton) && menuSpawned == null)
+        if (controller.GetTouch(padButton) && padEnabled && menuSpawned == null)
         {
             Vector2 axis = controller.GetAxis();
             //theta = (Mathf.Atan2(axis.y, axis.x) + Mathf.PI) - (Mathf.Atan2(padAxis.y, padAxis.x) + Mathf.PI);
@@ -264,6 +265,14 @@ public class WandController : MonoBehaviour
     {
         trigEnabled = false;
     }
+    public void PadEnable()
+    {
+        padEnabled = true;
+    }
+    public void PadDisable()
+    {
+        padEnabled = false;
+    }
     public void MenuEnable()
     {
         menuEnabled = true;
@@ -280,6 +289,7 @@ public class WandController : MonoBehaviour
     {
         return trigger;
     }
+
     public bool ShowingMenu()
     {
         return showMenu;

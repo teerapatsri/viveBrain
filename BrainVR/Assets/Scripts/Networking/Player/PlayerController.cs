@@ -125,6 +125,10 @@ public class PlayerController : NetworkBehaviour
                 firstPersonPlayerController.enabled = false;
                 break;
             case PlayerMode.VR:
+                if (IsHost)
+                {
+                    vrPlayerController.SetAsHost();
+                }
                 vrPlayerController.enabled = false;
                 break;
             case PlayerMode.Observer:

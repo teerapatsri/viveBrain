@@ -36,12 +36,35 @@ public class VRPlayerController : NetworkBehaviour
         cubeScaleTransformSynchronizer = GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>();
     }
 
+    private bool isHost = false;
+
+    public void SetAsHost()
+    {
+        isHost = true;
+    }
+
     private void OnEnable()
     {
         if (isLocalPlayer)
         {
             vrEnvController.EnableVR();
-            cubeScaleTransformSynchronizer.syncScaleFromServer = false;
+            if (isHost)
+            {
+                cubeScaleTransformSynchronizer.syncScaleFromServer = false;
+            }
+            else
+            {
+                var lCtrl = leftWand.GetComponent<WandController>();
+                lCtrl.GripDisable();
+                lCtrl.TrigDisable();
+                lCtrl.MenuDisable();
+                lCtrl.PadDisable();
+                var rCtrl = rightWand.GetComponent<WandController>();
+                rCtrl.GripDisable();
+                rCtrl.MenuDisable();
+                rCtrl.PadDisable();
+
+            }
         }
 
         vrDisplayContainer.SetActive(true);
@@ -59,7 +82,23 @@ public class VRPlayerController : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-            cubeScaleTransformSynchronizer.syncScaleFromServer = true;
+            if (isHost)
+            {
+                cubeScaleTransformSynchronizer.syncScaleFromServer = true;
+            }
+            else
+            {
+                var lCtrl = leftWand.GetComponent<WandController>();
+                lCtrl.GripEnable();
+                lCtrl.TrigEnable();
+                lCtrl.MenuEnable();
+                lCtrl.PadEnable();
+                var rCtrl = rightWand.GetComponent<WandController>();
+                rCtrl.GripEnable();
+                rCtrl.MenuEnable();
+                rCtrl.PadEnable();
+
+            }
             vrEnvController.DisableVR();
         }
     }
