@@ -14140,7 +14140,7 @@ MonoBehaviour:
   volumeDepth: 256
   clipDimensions: {x: 99, y: 99, z: 99, w: 1}
   enableExternalImages: 1
-  imageFolderPath: Test Set
+  imageFolderPath: nitadout
 --- !u!1 &1294113887
 GameObject:
   m_ObjectHideFlags: 0
