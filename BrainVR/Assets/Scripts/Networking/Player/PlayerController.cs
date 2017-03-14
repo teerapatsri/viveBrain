@@ -17,8 +17,15 @@ public class PlayerController : NetworkBehaviour
 
     public enum PlayerMode { FirstPerson, VR, Observer, Unknown };
 
+    /// <summary>
+    /// Mode that the player actually is.
+    /// </summary>
     [SyncVar(hook = "OnPlayerModeChange")]
     private PlayerMode currentPlayerMode = PlayerMode.Unknown;
+    /// <summary>
+    /// Mode currently displayed to the player.
+    /// </summary>
+    private PlayerMode currentLocalPlayerMode = PlayerMode.Unknown;
     [SyncVar]
     private bool _isHost = false;
     private bool _isBeingObserved = false;
@@ -57,10 +64,10 @@ public class PlayerController : NetworkBehaviour
         _isHost = CheckIsHost();
         if (_isHost) Debug.Log("Current player is a host.");
 
+        OnPlayerModeChange(currentPlayerMode); // Not local player
+
         // Set up player appearance
         UpdatePlayerDisplayAppearance(currentPlayerMode);
-
-        OnPlayerModeChange(currentPlayerMode);
     }
 
     public override void OnStartLocalPlayer()
@@ -110,9 +117,9 @@ public class PlayerController : NetworkBehaviour
 
     private void OnPlayerModeChange(PlayerMode newPlayerMode)
     {
-        if (currentPlayerMode == newPlayerMode) return;
+        if (currentLocalPlayerMode == newPlayerMode) return;
 
-        switch (currentPlayerMode)
+        switch (currentLocalPlayerMode)
         {
             case PlayerMode.FirstPerson:
                 firstPersonPlayerController.enabled = false;
@@ -132,6 +139,7 @@ public class PlayerController : NetworkBehaviour
                 break;
         }
 
+        currentLocalPlayerMode = newPlayerMode;
         currentPlayerMode = newPlayerMode;
 
         switch (newPlayerMode)
