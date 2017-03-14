@@ -51,14 +51,15 @@ public class PlayerController : NetworkBehaviour
     {
         // Set up player appearance
         UpdatePlayerDisplayAppearance(currentPlayerMode);
+
+        _isHost = CheckIsHost();
+
+        startCameraObj = GameObject.FindWithTag("StartCamera");
     }
 
     public override void OnStartLocalPlayer()
     {
-        _isHost = CheckIsHost();
         if (_isHost) Debug.Log("Current player is a host.");
-
-        startCameraObj = GameObject.FindWithTag("StartCamera");
 
         // Try to open in VR mode
         if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
