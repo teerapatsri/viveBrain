@@ -14,11 +14,6 @@ public class ObserverPlayerController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            // Find player to observe
-            observedPlayer = FindObservablePlayer();
-            // Set that player as being observed
-            observedPlayer.GetComponent<PlayerController>().IsBeingObserved = true;
-
             playerCameraObj.SetActive(true);
         }
     }
@@ -43,6 +38,17 @@ public class ObserverPlayerController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+            // Find player to observe
+            if (observedPlayer == null)
+            {
+                observedPlayer = FindObservablePlayer();
+                // Set that player as being observed
+                if (observedPlayer)
+                {
+                    observedPlayer.GetComponent<PlayerController>().IsBeingObserved = true;
+                }
+            }
+
             if (observedPlayer != null)
             {
                 GameObject targetDisplay = observedPlayer.GetComponent<PlayerController>().playerDisplay;
@@ -57,7 +63,7 @@ public class ObserverPlayerController : NetworkBehaviour
     {
         return GameObject.FindGameObjectsWithTag("Player")
             .Where(gameObj => IsPlayerAHost(gameObj))
-            .First();
+            .FirstOrDefault();
     }
 
     private bool IsPlayerAHost(GameObject player)
