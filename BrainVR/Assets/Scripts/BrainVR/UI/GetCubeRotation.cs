@@ -11,6 +11,6 @@ public class GetCubeRotation : MonoBehaviour {
     }
 	void Update () {
         if(cube != null)
-            transform.rotation = cube.transform.rotation;
+            transform.rotation = Quaternion.LookRotation(cube.transform.position -transform.position);
     }
 }
