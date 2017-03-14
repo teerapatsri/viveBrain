@@ -137,11 +137,14 @@ public class WandController : MonoBehaviour
                 audioSource.Stop();
                 audioSource.clip = audioclips[5];
                 audioSource.Play();
+                interactableController.EndGrab(this);
+                grip = false;
             }
-            gameController.ArrowActive = false;
-            planeController.EndMovePlane(this);
-            interactableController.EndGrab(this);
-            grip = false;
+            if (CompareTag("LeftWand"))//Plane mode
+            {
+                gameController.ArrowActive = false;
+                planeController.EndMovePlane(this);
+            }
         }
         if (controller.GetPressDown(padButton) && padEnabled) //show menu and pressing menu
         {

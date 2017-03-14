@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
     public UnityEngine.UI.Text triggerRight;
     public UnityEngine.UI.Text menuLeft;
     public UnityEngine.UI.Text menuRight;
+    public UnityEngine.UI.Text padLeft;
+    public UnityEngine.UI.Text padRight;
     public UnityEngine.UI.Text currentMode;
     public UnityEngine.UI.Text anatomicalPlane;
     public Transform backBar;
@@ -95,7 +97,7 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        phase = "Done";
+        phase = "Start";
         prePos = cube.transform.position;
         preRot = cube.transform.rotation;
         progress = 0;
@@ -106,6 +108,8 @@ public class GameController : MonoBehaviour
         triggerRight.text = "";
         menuLeft.text = "";
         menuRight.text = "";
+        padLeft.text = "";
+        padRight.text = "";
         currentMode.text = "";
         anatomicalPlane.text = "";
         TwoSideText = "One side view";
@@ -272,25 +276,53 @@ public class GameController : MonoBehaviour
     {
         //currentMode.text = "Current Axis"; // TOP FLOATING TEXT
         PlaneAxis = plane.GetAxis();
+        Debug.Log(phase);
         //anatomicalPlane.text = plane.CurrentAxis(); //subTOP Floating TEXT
         switch (phase)
         {
-
             case ("Start"):
                 {
-                    instructionText.text = "Press 'T' on Keyboard to start Tutorial, 'Q' to skip";
+                    grabLeft.text = "";
+                    grabRight.text = "";
+                    triggerLeft.text = "";
+                    triggerRight.text = "";
+                    menuLeft.text = "";
+                    menuRight.text = "";
+                    padLeft.text = "";
+                    padRight.text = "";
+                    instructionText.text = "";
+
+                    currentMode.text = "Press 'T' on Keyboard to show Tutorial";
                     //go to next phase
                     if (Input.GetKeyDown(KeyCode.T))
                     {
-                        phase = "Grab";
+                        phase = "Tutorial";
                         Debug.Log("Entering Tutorial!");
-                    }
+                    }/*
                     else if (Input.GetKeyDown(KeyCode.Q))
                     {
                         phase = "Done";
-                    }
+                    }*/
                     //render bar
                     hideBar();
+                    break;
+                }
+            case ("Tutorial"):
+                {
+                    currentMode.text = "Press 'Q' on Keyboard to exit Tutorial";
+
+                    grabLeft.text = "Slide Plane";
+                    grabRight.text = "Move";
+                    triggerLeft.text = "Zoom";
+                    triggerRight.text = "Pointer";
+                    padLeft.text = "<-Rotate->";
+                    padRight.text = "<-Rotate->";
+
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        phase = "Done";
+                        Debug.Log("Exiting Tutorial!");
+                    }
                     break;
                 }
             case ("Grab"):
@@ -578,6 +610,7 @@ public class GameController : MonoBehaviour
                 }
             case ("Done"):
                 {
+                    currentMode.text = "";
                     instructionText.text = "";
                     triggerLeft.text = "";
                     triggerRight.text = "";
@@ -585,6 +618,30 @@ public class GameController : MonoBehaviour
                     grabRight.text = "";
                     menuLeft.text = "";
                     menuRight.text = "";
+                    padLeft.text = "";
+                    padRight.text = "";
+                    if (Input.GetKeyDown(KeyCode.T))
+                    {
+                        phase = "Tutorial";
+                        Debug.Log("Entering Tutorial!");
+                    }
+                    //render bar
+                    hideBar();
+                    break;
+                }
+            default:
+                {
+                    currentMode.text = "Press 'T' on Keyboard to show Tutorial";
+                    //go to next phase
+                    if (Input.GetKeyDown(KeyCode.T))
+                    {
+                        phase = "Tutorial";
+                        Debug.Log("Entering Tutorial!");
+                    }/*
+                    else if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        phase = "Done";
+                    }*/
                     //render bar
                     hideBar();
                     break;
