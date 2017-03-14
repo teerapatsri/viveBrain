@@ -61,10 +61,7 @@ public class PlayerController : NetworkBehaviour
 
     private void Start()
     {
-        _isHost = CheckIsHost();
-        if (_isHost) Debug.Log("Current player is a host.");
-
-        OnPlayerModeChange(currentPlayerMode); // Not local player
+        OnPlayerModeChange(currentPlayerMode); // Not local player mode
 
         // Set up player appearance
         UpdatePlayerDisplayAppearance(currentPlayerMode);
@@ -72,6 +69,9 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
+        _isHost = CheckIsHost();
+        if (_isHost) Debug.Log("Current player is a host.");
+
         // Try to open in VR mode
         if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
         else CmdSetPlayerMode(PlayerMode.FirstPerson);

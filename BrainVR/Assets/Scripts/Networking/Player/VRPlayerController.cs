@@ -41,7 +41,6 @@ public class VRPlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             vrEnvController.EnableVR();
-
             cubeScaleTransformSynchronizer.syncScaleFromServer = false;
         }
 
@@ -61,7 +60,6 @@ public class VRPlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             cubeScaleTransformSynchronizer.syncScaleFromServer = true;
-
             vrEnvController.DisableVR();
         }
     }
