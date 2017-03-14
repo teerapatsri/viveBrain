@@ -107,49 +107,43 @@ public class PlayerController : NetworkBehaviour
     {
         if (currentPlayerMode == newPlayerMode) return;
 
-        if (isLocalPlayer)
+        switch (currentPlayerMode)
         {
-            switch (currentPlayerMode)
-            {
-                case PlayerMode.FirstPerson:
-                    firstPersonPlayerController.enabled = false;
-                    break;
-                case PlayerMode.VR:
-                    vrPlayerController.enabled = false;
-                    break;
-                case PlayerMode.Observer:
-                    observerPlayerController.enabled = false;
-                    break;
-                case PlayerMode.Unknown:
-                    // startCameraObj.GetComponent<AudioListener>().enabled = false;
-                    startCameraObj.SetActive(false);
-                    break;
-            }
+            case PlayerMode.FirstPerson:
+                firstPersonPlayerController.enabled = false;
+                break;
+            case PlayerMode.VR:
+                vrPlayerController.enabled = false;
+                break;
+            case PlayerMode.Observer:
+                observerPlayerController.enabled = false;
+                break;
+            case PlayerMode.Unknown:
+                // startCameraObj.GetComponent<AudioListener>().enabled = false;
+                startCameraObj.SetActive(false);
+                break;
         }
 
         currentPlayerMode = newPlayerMode;
 
-        if (isLocalPlayer)
+        switch (newPlayerMode)
         {
-            switch (newPlayerMode)
-            {
-                case PlayerMode.FirstPerson:
-                    firstPersonPlayerController.enabled = true;
-                    break;
-                case PlayerMode.VR:
-                    vrPlayerController.enabled = true;
-                    break;
-                case PlayerMode.Observer:
-                    observerPlayerController.enabled = true;
-                    break;
-                case PlayerMode.Unknown:
-                    // startCameraObj.GetComponent<AudioListener>().enabled = true;
-                    if (startCameraObj)
-                    {
-                        startCameraObj.SetActive(true);
-                    }
-                    break;
-            }
+            case PlayerMode.FirstPerson:
+                firstPersonPlayerController.enabled = true;
+                break;
+            case PlayerMode.VR:
+                vrPlayerController.enabled = true;
+                break;
+            case PlayerMode.Observer:
+                observerPlayerController.enabled = true;
+                break;
+            case PlayerMode.Unknown:
+                // startCameraObj.GetComponent<AudioListener>().enabled = true;
+                if (startCameraObj)
+                {
+                    startCameraObj.SetActive(true);
+                }
+                break;
         }
 
         UpdatePlayerDisplayAppearance(newPlayerMode);

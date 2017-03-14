@@ -12,35 +12,44 @@ public class ObserverPlayerController : NetworkBehaviour
 
     private void OnEnable()
     {
-        // Find player to observe
-        observedPlayer = FindObservablePlayer();
-        // Set that player as being observed
-        observedPlayer.GetComponent<PlayerController>().IsBeingObserved = true;
+        if (isLocalPlayer)
+        {
+            // Find player to observe
+            observedPlayer = FindObservablePlayer();
+            // Set that player as being observed
+            observedPlayer.GetComponent<PlayerController>().IsBeingObserved = true;
 
-        playerCameraObj.SetActive(true);
+            playerCameraObj.SetActive(true);
+        }
     }
 
     private void OnDisable()
     {
-        playerCameraObj.SetActive(false);
-
-        // Set that player as not being observed
-        if (observedPlayer != null)
+        if (isLocalPlayer)
         {
-            var playerController = observedPlayer.GetComponent<PlayerController>();
-            playerController.IsBeingObserved = false;
+            playerCameraObj.SetActive(false);
+
+            // Set that player as not being observed
+            if (observedPlayer != null)
+            {
+                var playerController = observedPlayer.GetComponent<PlayerController>();
+                playerController.IsBeingObserved = false;
+            }
+            observedPlayer = null;
         }
-        observedPlayer = null;
     }
 
     private void Update()
     {
-        if (observedPlayer != null)
+        if (isLocalPlayer)
         {
-            GameObject targetDisplay = observedPlayer.GetComponent<PlayerController>().playerDisplay;
-            Transform t = targetDisplay.transform;
-            playerCameraObj.transform.position = new Vector3(t.position.x, t.position.y, t.position.z);
-            playerCameraObj.transform.rotation = new Quaternion(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w);
+            if (observedPlayer != null)
+            {
+                GameObject targetDisplay = observedPlayer.GetComponent<PlayerController>().playerDisplay;
+                Transform t = targetDisplay.transform;
+                playerCameraObj.transform.position = new Vector3(t.position.x, t.position.y, t.position.z);
+                playerCameraObj.transform.rotation = new Quaternion(t.rotation.x, t.rotation.y, t.rotation.z, t.rotation.w);
+            }
         }
     }
 

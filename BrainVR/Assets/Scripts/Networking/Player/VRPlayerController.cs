@@ -38,9 +38,12 @@ public class VRPlayerController : NetworkBehaviour
 
     private void OnEnable()
     {
-        vrEnvController.EnableVR();
+        if (isLocalPlayer)
+        {
+            vrEnvController.EnableVR();
 
-        cubeScaleTransformSynchronizer.syncScaleFromServer = false;
+            cubeScaleTransformSynchronizer.syncScaleFromServer = false;
+        }
 
         vrDisplayContainer.SetActive(true);
         OnLaserActiveChange(laserActive);
@@ -55,9 +58,12 @@ public class VRPlayerController : NetworkBehaviour
         OnRightWandActiveChange(false);
         vrDisplayContainer.SetActive(false);
 
-        cubeScaleTransformSynchronizer.syncScaleFromServer = true;
+        if (isLocalPlayer)
+        {
+            cubeScaleTransformSynchronizer.syncScaleFromServer = true;
 
-        vrEnvController.DisableVR();
+            vrEnvController.DisableVR();
+        }
     }
 
     private void LateUpdate()

@@ -13,14 +13,20 @@ public class FirstPersonPlayerController : NetworkBehaviour
 
     private void OnEnable()
     {
-        playerCameraObj.SetActive(true);
-        firstPersonController.enabled = true;
+        if (isLocalPlayer)
+        {
+            playerCameraObj.SetActive(true);
+            firstPersonController.enabled = true;
+        }
     }
 
     private void OnDisable()
     {
-        firstPersonController.enabled = false;
-        playerCameraObj.SetActive(false);
+        if (isLocalPlayer)
+        {
+            firstPersonController.enabled = false;
+            playerCameraObj.SetActive(false);
+        }
     }
 
     private void LateUpdate()
