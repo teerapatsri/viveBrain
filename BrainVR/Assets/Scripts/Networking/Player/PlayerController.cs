@@ -47,20 +47,22 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    private void Awake()
+    {
+        startCameraObj = GameObject.FindWithTag("StartCamera");
+    }
+
     private void Start()
     {
+        _isHost = CheckIsHost();
+        if (_isHost) Debug.Log("Current player is a host.");
+
         // Set up player appearance
         UpdatePlayerDisplayAppearance(currentPlayerMode);
-
-        _isHost = CheckIsHost();
-
-        startCameraObj = GameObject.FindWithTag("StartCamera");
     }
 
     public override void OnStartLocalPlayer()
     {
-        if (_isHost) Debug.Log("Current player is a host.");
-
         // Try to open in VR mode
         if (CanEnableVRMode()) CmdSetPlayerMode(PlayerMode.VR);
         else CmdSetPlayerMode(PlayerMode.FirstPerson);
