@@ -122,8 +122,11 @@ public class PlayerController : NetworkBehaviour
                 observerPlayerController.enabled = false;
                 break;
             case PlayerMode.Unknown:
-                // startCameraObj.GetComponent<AudioListener>().enabled = false;
-                startCameraObj.SetActive(false);
+                if (isLocalPlayer)
+                {
+                    // startCameraObj.GetComponent<AudioListener>().enabled = false;
+                    startCameraObj.SetActive(false);
+                }
                 break;
         }
 
@@ -141,9 +144,9 @@ public class PlayerController : NetworkBehaviour
                 observerPlayerController.enabled = true;
                 break;
             case PlayerMode.Unknown:
-                // startCameraObj.GetComponent<AudioListener>().enabled = true;
-                if (startCameraObj)
+                if (isLocalPlayer && startCameraObj)
                 {
+                    // startCameraObj.GetComponent<AudioListener>().enabled = true;
                     startCameraObj.SetActive(true);
                 }
                 break;
