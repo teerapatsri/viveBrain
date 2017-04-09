@@ -812,7 +812,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -1028,6 +1028,7 @@ MonoBehaviour:
   playerDisplay: {fileID: 1000011109169604}
   playerColorObj: {fileID: 1000011299907796}
   playerCamera: {fileID: 20000010706673138}
+  lengthIndicator: {fileID: 0}
 --- !u!114 &114003610204327964
 MonoBehaviour:
   m_ObjectHideFlags: 1

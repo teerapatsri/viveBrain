@@ -13,6 +13,8 @@ public class PlayerController : NetworkBehaviour
     public GameObject playerColorObj;
     public Camera playerCamera;
 
+    public GameObject ruler;
+
     private GameObject startCameraObj;
 
     public enum PlayerMode { FirstPerson, VR, Observer, Unknown };
