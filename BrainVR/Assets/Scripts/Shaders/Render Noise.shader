@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Ray Marching/Render Noise" {
 	
 	Properties
@@ -42,7 +44,7 @@ Shader "Hidden/Ray Marching/Render Noise" {
 	v2f vert( appdata_img v ) 
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		
 		o.uv[0] = v.texcoord.xy;
 		o.uv[1] = v.texcoord.xy;
@@ -151,7 +153,7 @@ Shader "Hidden/Ray Marching/Render Noise" {
 		float2 offs = _MainTex_TexelSize.xy;
 	
 		v2fBlur o;
- 		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+ 		o.pos = UnityObjectToClipPos(v.vertex);
  		o.uv[0] = v.texcoord;
  		o.uv[1] = v.texcoord + mask * offs;
  		o.uv[2] = v.texcoord - mask * offs;

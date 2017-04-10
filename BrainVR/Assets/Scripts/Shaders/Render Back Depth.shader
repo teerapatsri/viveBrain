@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Ray Marching/Render Back Depth" {
 
 	CGINCLUDE
@@ -17,7 +19,7 @@ Shader "Hidden/Ray Marching/Render Back Depth" {
 		v2f vert(appdata_base v)
 		{
 			v2f o;
-			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+			o.pos = UnityObjectToClipPos(v.vertex);
 			o.localPos = v.vertex.xyz + 0.5;
 			UNITY_TRANSFER_DEPTH(o.depth);
 			return o;
