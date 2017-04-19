@@ -20,6 +20,11 @@ public struct RayMarchingOptions
 
 public class RayMarchingMasterController : MonoBehaviour
 {
+    [Header("Importer")]
+    public MRIImporter importer;
+    public string imageFolderPath = "";
+
+    [Header("Configurations")]
     public GameObject cubeTarget;
     public GameObject clipPlane;
 
@@ -37,23 +42,8 @@ public class RayMarchingMasterController : MonoBehaviour
     private Shader rayMarchShader;
 
     [SerializeField]
-    [Header("Remove all the darker colors")]
-    private bool increaseVisiblity = false;
-
-
-    [Header("Drag all the textures in here")]
-    [SerializeField]
-    private Texture2D[] slices;
-    [SerializeField]
     [Range(0, 2)]
     private float opacity = 1;
-    [Header("Volume texture size. These must be a power of 2")]
-    [SerializeField]
-    private int volumeWidth = 256;
-    [SerializeField]
-    private int volumeHeight = 256;
-    [SerializeField]
-    private int volumeDepth = 256;
     [Header("Clipping planes percentage")]
     [SerializeField]
     private Vector4 clipDimensions = new Vector4(100, 100, 100, 0);
@@ -63,20 +53,25 @@ public class RayMarchingMasterController : MonoBehaviour
     private Camera _ppCamera;
     private Camera _uiCamera;
     private Texture3D _volumeBuffer;
+    private CubeRenderStyleController renderStyle;
 
     private void Awake()
     {
         _rayMarchMaterial = new Material(rayMarchShader);
         _compositeMaterial = new Material(compositeShader);
+        renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
     }
 
     private void Start()
     {
-        if (enableExternalImages)
-        {
-            LoadMRIImagesFromFolder();
-        }
-        GenerateVolumeTexture();
+        StartCoroutine(LoadMRIImage());
+    }
+
+    private IEnumerator LoadMRIImage()
+    {
+        yield return StartCoroutine(importer.Import(imageFolderPath));
+        _volumeBuffer = importer.ImportedTexture;
+        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
     }
 
     private void OnDestroy()
@@ -122,8 +117,6 @@ public class RayMarchingMasterController : MonoBehaviour
 
     public void RenderImage(RenderTexture source, RenderTexture destination, RayMarchingOptions options, Camera camera)
     {
-        var renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
-
         _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
 
         var sourceWidth = source.width;
@@ -221,79 +214,5 @@ public class RayMarchingMasterController : MonoBehaviour
     private Vector3 CalculatePlaneVector(Vector3 v)
     {
         return cubeTarget.transform.InverseTransformPoint(clipPlane.transform.TransformPoint(v));
-    }
-
-    private void GenerateVolumeTexture()
-    {
-        // use a bunch of memory!
-        _volumeBuffer = new Texture3D(volumeWidth, volumeHeight, volumeDepth, TextureFormat.ARGB32, false);
-
-        var w = _volumeBuffer.width;
-        var h = _volumeBuffer.height;
-        var d = _volumeBuffer.depth;
-
-        // skip some slices if we can't fit it all in
-        var countOffset = (slices.Length - 1) / (float)d;
-
-        var volumeColors = new Color[w * h * d];
-
-        var sliceCount = 0;
-        var sliceCountFloat = 0f;
-        for (int z = 0; z < d; z++)
-        {
-            sliceCountFloat += countOffset;
-            sliceCount = Mathf.FloorToInt(sliceCountFloat);
-            for (int x = 0; x < w; x++)
-            {
-                for (int y = 0; y < h; y++)
-                {
-                    var idx = x + (y * w) + (z * (w * h));
-                    volumeColors[idx] = slices[sliceCount].GetPixelBilinear(x / (float)w, y / (float)h);
-                    if (increaseVisiblity)
-                    {
-                        volumeColors[idx].a *= volumeColors[idx].r;
-                    }
-                }
-            }
-        }
-
-        _volumeBuffer.SetPixels(volumeColors);
-        _volumeBuffer.Apply();
-
-        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
-    }
-
-    public bool enableExternalImages = false;
-    public string imageFolderPath = "";
-
-    private void LoadMRIImagesFromFolder()
-    {
-        // Change this to change pictures folder
-        var basePath = Path.Combine(Application.dataPath, "MRI Images");
-        var path = Path.GetFullPath(Path.Combine(basePath, imageFolderPath));
-        Debug.Log("MRI Image Base Path: " + path);
-
-        var pngFilePaths = Directory.GetFiles(path, "*.png")
-            .Select(file => LoadTextureFromURL(file, true));
-
-        var jpgFilePaths = Directory.GetFiles(path, "*.jpg")
-            .Select(file => LoadTextureFromURL(file, false));
-
-        slices = pngFilePaths.Concat(jpgFilePaths).OrderBy(texture => texture.name).ToArray();
-
-        Debug.Log("Slice count: " + slices.Length);
-    }
-
-    private Texture2D LoadTextureFromURL(string filePath, bool isPNG)
-    {
-        // LoadImageIntoTexture compresses JPGs by DXT1 and PNGs by DXT5
-        var texture = new Texture2D(1024, 1024, isPNG ? TextureFormat.DXT5 : TextureFormat.DXT1, false);
-
-        WWW www = new WWW(@"file://" + filePath);
-        www.LoadImageIntoTexture(texture);
-
-        texture.name = Path.GetFileName(filePath);
-
-        return texture;
     }
 }
