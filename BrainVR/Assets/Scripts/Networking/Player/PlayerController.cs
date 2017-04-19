@@ -14,6 +14,7 @@ public class PlayerController : NetworkBehaviour
     public Camera playerCamera;
 
     public GameObject ruler;
+    private RulerController rulerController;
 
     private GameObject startCameraObj;
 
@@ -59,6 +60,7 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         startCameraObj = GameObject.FindWithTag("StartCamera");
+        rulerController = ruler.GetComponent<RulerController>();
     }
 
     private void Start()
@@ -105,6 +107,17 @@ public class PlayerController : NetworkBehaviour
             else if (Input.GetKeyDown(KeyCode.F)) CmdSetPlayerMode(PlayerMode.FirstPerson);
             else if (Input.GetKeyDown(KeyCode.O) && CanBeObserver()) CmdSetPlayerMode(PlayerMode.Observer);
         }
+
+        // TODO: Change to WandController later
+        if (Input.GetMouseButtonDown (0)) 
+        {
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            Vector3 clickPosition = new Vector3(Input.mousePosition.x / screenWidth, Input.mousePosition.y / screenHeight, 0);
+            rulerController.PinPoint(clickPosition);
+        }
+
+        rulerController.UpdateCurrentPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y));
     }
 
     private bool CanBeObserver()
