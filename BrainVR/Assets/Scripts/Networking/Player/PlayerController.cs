@@ -116,24 +116,50 @@ public class PlayerController : NetworkBehaviour
 
         // TODO: Change to WandController later
         if (Input.GetMouseButtonDown (0)) 
+        Plane cutPlane = new Plane(clipPlane.transform.TransformPoint(Vector3.zero),clipPlane.transform.TransformPoint(Vector3.right),clipPlane.transform.TransformPoint(Vector3.forward));
+        Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+        float rayDistance;  
+        if (Input.GetMouseButton (0)) 
         {
             // float screenWidth = Screen.width;
             // float screenHeight = Screen.height;
             // Vector3 clickPosition = new Vector3(Input.mousePosition.x / screenWidth, Input.mousePosition.y / screenHeight, 0);
-            Plane cutPlane = new Plane(clipPlane.transform.TransformPoint(Vector3.zero),clipPlane.transform.TransformPoint(Vector3.right),clipPlane.transform.TransformPoint(Vector3.forward));
-            Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
-            float rayDistance;
             if (cutPlane.Raycast(ray, out rayDistance)) {
                 // rulerMarker.position = ray.GetPoint(rayDistance);
                 Vector3 localPoint = cubeTarget.transform.InverseTransformPoint(ray.GetPoint(rayDistance));
                 Vector3 drawnPoint = ray.GetPoint(rayDistance);
                 if(isOutOfBound(localPoint)) {
                     Debug.DrawLine(Vector3.zero, ray.GetPoint(rayDistance), Color.red,0.5f);
+                    rulerController.UpdateCurrentPoint(ray.GetPoint(rayDistance));
                 } else {
                     Debug.DrawLine(Vector3.zero, ray.GetPoint(rayDistance), Color.green,0.5f);
                     // Debug.Log(drawnPoint);
                     // Debug.Log(drawnPoint + cutPlane.normal * 0.1f);
                     rulerController.PinPoint(ray.GetPoint(rayDistance));
+                    if(!firstPointReceived){
+                        firstPoint = ray.GetPoint(rayDistance);
+                        rulerController.PinPoint(firstPoint);
+                        firstPointReceived = true;
+                    }
+                    else 
+                    {
+                        rulerController.UpdateCurrentPoint(ray.GetPoint(rayDistance));
+                    }
+                }
+            }
+        } 
+        else if (Input.GetMouseButtonUp (0)) 
+        {
+            if (cutPlane.Raycast(ray, out rayDistance)) {
+                // rulerMarker.position = ray.GetPoint(rayDistance);
+                Vector3 localPoint = cubeTarget.transform.InverseTransformPoint(ray.GetPoint(rayDistance));
+                Vector3 drawnPoint = ray.GetPoint(rayDistance);
+                if(firstPointReceived) {
+                    secondPoint = ray.GetPoint(rayDistance);
+                    rulerController.PinPoint(secondPoint);
+                    firstPointReceived = false;
+                } else {
+                    // don't draw
                 }
             }
         }
