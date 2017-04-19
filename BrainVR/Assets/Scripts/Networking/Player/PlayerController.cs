@@ -104,7 +104,7 @@ public class PlayerController : NetworkBehaviour
         if (newPlayerMode == currentPlayerMode) return;
         currentPlayerMode = newPlayerMode;
     }
-
+    private bool firstPointReceived = false;
     void Update()
     {
         if (isLocalPlayer)
@@ -115,7 +115,6 @@ public class PlayerController : NetworkBehaviour
         }
 
         // TODO: Change to WandController later
-        if (Input.GetMouseButtonDown (0)) 
         Plane cutPlane = new Plane(clipPlane.transform.TransformPoint(Vector3.zero),clipPlane.transform.TransformPoint(Vector3.right),clipPlane.transform.TransformPoint(Vector3.forward));
         Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
         float rayDistance;  
@@ -137,8 +136,7 @@ public class PlayerController : NetworkBehaviour
                     // Debug.Log(drawnPoint + cutPlane.normal * 0.1f);
                     rulerController.PinPoint(ray.GetPoint(rayDistance));
                     if(!firstPointReceived){
-                        firstPoint = ray.GetPoint(rayDistance);
-                        rulerController.PinPoint(firstPoint);
+                        rulerController.PinPoint(ray.GetPoint(rayDistance));
                         firstPointReceived = true;
                     }
                     else 
@@ -155,8 +153,7 @@ public class PlayerController : NetworkBehaviour
                 Vector3 localPoint = cubeTarget.transform.InverseTransformPoint(ray.GetPoint(rayDistance));
                 Vector3 drawnPoint = ray.GetPoint(rayDistance);
                 if(firstPointReceived) {
-                    secondPoint = ray.GetPoint(rayDistance);
-                    rulerController.PinPoint(secondPoint);
+                    rulerController.PinPoint(ray.GetPoint(rayDistance));
                     firstPointReceived = false;
                 } else {
                     // don't draw
