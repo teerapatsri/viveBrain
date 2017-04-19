@@ -71,7 +71,7 @@ public class RulerController : MonoBehaviour {
 		nPin = (nPin + 1) % 2;
 	}
 
-	public void UpdateCurrentPoint(Vector2 currentPoint)
+	public void UpdateCurrentPoint(Vector3 currentPoint)
 	{
 		if(!isPinSecondPoint) 
 		{

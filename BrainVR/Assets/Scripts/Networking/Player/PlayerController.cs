@@ -134,7 +134,6 @@ public class PlayerController : NetworkBehaviour
                     Debug.DrawLine(Vector3.zero, ray.GetPoint(rayDistance), Color.green,0.5f);
                     // Debug.Log(drawnPoint);
                     // Debug.Log(drawnPoint + cutPlane.normal * 0.1f);
-                    rulerController.PinPoint(ray.GetPoint(rayDistance));
                     if(!firstPointReceived){
                         rulerController.PinPoint(ray.GetPoint(rayDistance));
                         firstPointReceived = true;
@@ -161,6 +160,7 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
+    
     private Vector3 CalculatePlaneVector(Vector3 v)
     {
         return cubeTarget.transform.InverseTransformPoint(v);
