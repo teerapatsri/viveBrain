@@ -11316,6 +11316,21 @@ Prefab:
       propertyPath: m_RootOrder
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 114000013965771004, guid: 03dcbe5e8744c444fbac2e8e5e960c31,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114056797522914774, guid: 03dcbe5e8744c444fbac2e8e5e960c31,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114056797522914774, guid: 03dcbe5e8744c444fbac2e8e5e960c31,
+        type: 2}
+      propertyPath: rulerShader
+      value: 
+      objectReference: {fileID: 2100000, guid: 900dface67deb4006b0d39ee1eaf1e2b, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 03dcbe5e8744c444fbac2e8e5e960c31, type: 2}
   m_IsPrefabParent: 0

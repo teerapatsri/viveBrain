@@ -20,6 +20,10 @@ public class PlayerController : NetworkBehaviour
 
     public enum PlayerMode { FirstPerson, VR, Observer, Unknown };
 
+    public Transform rulerMarker;
+    private GameObject clipPlane;
+    private GameObject cubeTarget;
+
     /// <summary>
     /// Mode that the player actually is.
     /// </summary>
@@ -60,6 +64,8 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         startCameraObj = GameObject.FindWithTag("StartCamera");
+        clipPlane = GameObject.Find("Clipping Plane");
+        cubeTarget = GameObject.Find("Cube");
         rulerController = ruler.GetComponent<RulerController>();
     }
 
@@ -111,13 +117,34 @@ public class PlayerController : NetworkBehaviour
         // TODO: Change to WandController later
         if (Input.GetMouseButtonDown (0)) 
         {
-            float screenWidth = Screen.width;
-            float screenHeight = Screen.height;
-            Vector3 clickPosition = new Vector3(Input.mousePosition.x / screenWidth, Input.mousePosition.y / screenHeight, 0);
-            rulerController.PinPoint(clickPosition);
+            // float screenWidth = Screen.width;
+            // float screenHeight = Screen.height;
+            // Vector3 clickPosition = new Vector3(Input.mousePosition.x / screenWidth, Input.mousePosition.y / screenHeight, 0);
+            Plane cutPlane = new Plane(clipPlane.transform.TransformPoint(Vector3.zero),clipPlane.transform.TransformPoint(Vector3.right),clipPlane.transform.TransformPoint(Vector3.forward));
+            Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+            float rayDistance;
+            if (cutPlane.Raycast(ray, out rayDistance)) {
+                // rulerMarker.position = ray.GetPoint(rayDistance);
+                Vector3 localPoint = cubeTarget.transform.InverseTransformPoint(ray.GetPoint(rayDistance));
+                Vector3 drawnPoint = ray.GetPoint(rayDistance);
+                if(isOutOfBound(localPoint)) {
+                    Debug.DrawLine(Vector3.zero, ray.GetPoint(rayDistance), Color.red,0.5f);
+                } else {
+                    Debug.DrawLine(Vector3.zero, ray.GetPoint(rayDistance), Color.green,0.5f);
+                    // Debug.Log(drawnPoint);
+                    // Debug.Log(drawnPoint + cutPlane.normal * 0.1f);
+                    rulerController.PinPoint(ray.GetPoint(rayDistance));
+                }
+            }
         }
+    }
+    private Vector3 CalculatePlaneVector(Vector3 v)
+    {
+        return cubeTarget.transform.InverseTransformPoint(v);
+    }
 
-        rulerController.UpdateCurrentPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y));
+    private bool isOutOfBound(Vector3 v) {
+        return v.x < -0.5f || v.x > 0.5f || v.z < -0.5f || v.z  > 0.5f || v.y < -0.5f || v.y > 0.5f;
     }
 
     private bool CanBeObserver()

@@ -10,6 +10,11 @@ public class RulerController : MonoBehaviour {
 	private int nPin = 0;
 	private bool isPinSecondPoint = false;
 	private Vector3 firstPoint, secondPoint;
+	
+	//New Ruler
+	public Plane groundPlane;
+    public Transform markerObject;
+	public Material rulerShader;
 
 	void Start () {
 		InitializeLengthIndicator();
@@ -27,7 +32,8 @@ public class RulerController : MonoBehaviour {
 		lengthIndicatorRenderer = lengthIndicator.GetComponent<LineRenderer>();
 
 		lengthIndicatorRenderer.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
-	
+		// lengthIndicatorRenderer.material = rulerShader;
+
 		lengthIndicatorRenderer.startColor = Color.green;
 		lengthIndicatorRenderer.endColor = Color.green;
 
