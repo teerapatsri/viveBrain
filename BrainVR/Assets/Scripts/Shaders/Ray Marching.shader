@@ -75,7 +75,8 @@ Shader "Hidden/Ray Marching/Ray Marching"
 
 		for (int k = 0; k < STEP_CNT; k++)
 		{
-			float4 src = tex3D(_VolumeTex, pos);
+			float srcVal = tex3D(_VolumeTex, pos).a;
+			float4 src = float4(srcVal, srcVal, srcVal, srcVal);
 
 			// Standard blending
 			if (_ShaderNumber == 1) {

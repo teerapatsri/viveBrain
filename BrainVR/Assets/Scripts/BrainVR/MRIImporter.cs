@@ -137,9 +137,7 @@ public class MRIImporter : MonoBehaviour
                 for (int y = 0; y < h; y++)
                 {
                     long idx = x + (y * w) + ((long)z * (w * h));
-                    volumeColors[idx] = slices[sliceIndex].GetPixel(x, y);
-                    volumeColors[idx].a *= volumeColors[idx].r;
-                    //volumeColors[idx].a = (byte)(volumeColors[idx].a * 256.0f / volumeColors[idx].r);
+                    volumeColors[idx].a = slices[sliceIndex].GetPixel(x, y).r;
                 }
             }
 
@@ -147,7 +145,7 @@ public class MRIImporter : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
 
-        _result = new Texture3D(w, h, d, TextureFormat.ARGB32, false);
+        _result = new Texture3D(w, h, d, TextureFormat.Alpha8, false);
         _result.SetPixels(volumeColors);
         _result.Apply();
     }
