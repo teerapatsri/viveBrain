@@ -43,7 +43,8 @@ public class RayMarchingMasterController : MonoBehaviour
 
     [Header("Drag all the textures in here")]
     [SerializeField]
-    private Texture2D[] slices;
+	private List<Texture2D[]> slices = new List<Texture2D[]>();
+//    private Texture2D[] slices;
     [SerializeField]
     [Range(0, 2)]
     private float opacity = 1;
@@ -62,7 +63,8 @@ public class RayMarchingMasterController : MonoBehaviour
     private Material _compositeMaterial;
     private Camera _ppCamera;
     private Camera _uiCamera;
-    private Texture3D _volumeBuffer;
+	private List<Texture3D> _volumeBuffer = new List<Texture3D>();
+	private int selectedVolumeBufferIndex = 0;
 
     private void Awake()
     {
@@ -77,14 +79,33 @@ public class RayMarchingMasterController : MonoBehaviour
             LoadMRIImagesFromFolder();
         }
         GenerateVolumeTexture();
+		Debug.Log ("Set volumnBufferIndex to: " + selectedVolumeBufferIndex);
+		_rayMarchMaterial.SetTexture ("_VolumeTex", _volumeBuffer[selectedVolumeBufferIndex]);
     }
+
+	void Update()
+	{
+		// TODO: Change to WandController later
+		if (Input.GetMouseButtonDown (0)) 
+		{
+			selectedVolumeBufferIndex = (selectedVolumeBufferIndex + 1) % _volumeBuffer.Count;
+			Debug.Log ("Set volumnBufferIndex to: " + selectedVolumeBufferIndex);
+			_rayMarchMaterial.SetTexture ("_VolumeTex", _volumeBuffer[selectedVolumeBufferIndex]);
+		}
+	}
 
     private void OnDestroy()
     {
-        if (_volumeBuffer != null)
-        {
-            Destroy(_volumeBuffer);
-        }
+		if (_volumeBuffer != null)
+		{
+			foreach (Texture3D _ in _volumeBuffer) 
+			{
+				if (_ != null)
+				{
+					Destroy(_);
+				}
+			}
+		}
     }
 
     void OnDrawGizmos()
@@ -122,9 +143,10 @@ public class RayMarchingMasterController : MonoBehaviour
 
     public void RenderImage(RenderTexture source, RenderTexture destination, RayMarchingOptions options, Camera camera)
     {
+		Debug.Log ("Enter RenderImage()");
         var renderStyle = cubeTarget.GetComponent<CubeRenderStyleController>();
 
-        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
+//        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
 
         var sourceWidth = source.width;
         var sourceHeight = source.height;
@@ -225,63 +247,72 @@ public class RayMarchingMasterController : MonoBehaviour
 
     private void GenerateVolumeTexture()
     {
-        // use a bunch of memory!
-        _volumeBuffer = new Texture3D(volumeWidth, volumeHeight, volumeDepth, TextureFormat.ARGB32, false);
+		Debug.Log ("Enter GenerateVolumnTexture");
+		foreach (Texture2D[] slice in slices) {
+			Debug.Log ("Slide length: " + slice.Length);
+			// use a bunch of memory!
+			Texture3D _volumeBufferTmp = new Texture3D (volumeWidth, volumeHeight, volumeDepth, TextureFormat.ARGB32, false);
 
-        var w = _volumeBuffer.width;
-        var h = _volumeBuffer.height;
-        var d = _volumeBuffer.depth;
+			var w = _volumeBufferTmp.width;
+			var h = _volumeBufferTmp.height;
+			var d = _volumeBufferTmp.depth;
 
-        // skip some slices if we can't fit it all in
-        var countOffset = (slices.Length - 1) / (float)d;
+			// skip some slices if we can't fit it all in
+			var countOffset = (slice.Length - 1) / (float)d;
 
-        var volumeColors = new Color[w * h * d];
+			var volumeColors = new Color[w * h * d];
 
-        var sliceCount = 0;
-        var sliceCountFloat = 0f;
-        for (int z = 0; z < d; z++)
-        {
-            sliceCountFloat += countOffset;
-            sliceCount = Mathf.FloorToInt(sliceCountFloat);
-            for (int x = 0; x < w; x++)
-            {
-                for (int y = 0; y < h; y++)
-                {
-                    var idx = x + (y * w) + (z * (w * h));
-                    volumeColors[idx] = slices[sliceCount].GetPixelBilinear(x / (float)w, y / (float)h);
-                    if (increaseVisiblity)
-                    {
-                        volumeColors[idx].a *= volumeColors[idx].r;
-                    }
-                }
-            }
-        }
+			var sliceCount = 0;
+			var sliceCountFloat = 0f;
+			for (int z = 0; z < d; z++) {
+				sliceCountFloat += countOffset;
+				sliceCount = Mathf.FloorToInt (sliceCountFloat);
+				for (int x = 0; x < w; x++) {
+					for (int y = 0; y < h; y++) {
+						var idx = x + (y * w) + (z * (w * h));
+						volumeColors [idx] = slice[sliceCount].GetPixelBilinear (x / (float)w, y / (float)h);
+						if (increaseVisiblity) {
+							volumeColors [idx].a *= volumeColors [idx].r;
+						}
+					}
+				}
+			}
 
-        _volumeBuffer.SetPixels(volumeColors);
-        _volumeBuffer.Apply();
-
-        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
+			_volumeBufferTmp.SetPixels (volumeColors);
+			_volumeBufferTmp.Apply ();
+			_volumeBuffer.Add (_volumeBufferTmp);
+			Debug.Log ("_volumnBuffer: " + _volumeBuffer);
+			Debug.Log ("_volumnBuffer count: " + _volumeBuffer.Count);
+		}
     }
 
     public bool enableExternalImages = false;
     public string imageFolderPath = "";
+	private int nSlices = 0;
 
     private void LoadMRIImagesFromFolder()
     {
         // Change this to change pictures folder
         var basePath = Path.Combine(Application.dataPath, "MRI Images");
         var path = Path.GetFullPath(Path.Combine(basePath, imageFolderPath));
-        Debug.Log("MRI Image Base Path: " + path);
 
-        var pngFilePaths = Directory.GetFiles(path, "*.png")
-            .Select(file => LoadTextureFromURL(file, true));
+		// Find Subdirectories
+		string [] subdirectoryEntries = Directory.GetDirectories(path);
+		foreach (string subdirectory in subdirectoryEntries) {
+			Debug.Log (subdirectory);
+			var pngFilePaths = Directory.GetFiles (subdirectory, "*.png")
+										.Select (file => LoadTextureFromURL (file, true));
 
-        var jpgFilePaths = Directory.GetFiles(path, "*.jpg")
-            .Select(file => LoadTextureFromURL(file, false));
+			var jpgFilePaths = Directory.GetFiles (subdirectory, "*.jpg")
+										.Select (file => LoadTextureFromURL (file, false));
 
-        slices = pngFilePaths.Concat(jpgFilePaths).OrderBy(texture => texture.name).ToArray();
+			slices.Add (pngFilePaths.Concat (jpgFilePaths).OrderBy (texture => texture.name).ToArray ());
+			Debug.Log("Slices count: " + slices.Count);
+			Debug.Log("Slice count: " + slices[slices.Count - 1].Length);
+		}
 
-        Debug.Log("Slice count: " + slices.Length);
+		nSlices = slices.Count;
+		Debug.Log ("nSlices: " + nSlices);
     }
 
     private Texture2D LoadTextureFromURL(string filePath, bool isPNG)

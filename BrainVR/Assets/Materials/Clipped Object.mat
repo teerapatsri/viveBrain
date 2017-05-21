@@ -10,28 +10,20 @@ Material:
   m_Shader: {fileID: 4800000, guid: fd69de1ff9a9f164cb206eee3733c43a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
+  disabledShaderPasses: []
   m_SavedProperties:
-    serializedVersion: 2
+    serializedVersion: 3
     m_TexEnvs:
-    - first:
-        name: _MainTex
-      second:
+    - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - first:
-        name: _Glossiness
-      second: 0.817
-    - first:
-        name: _Metallic
-      second: 1
+    - _Glossiness: 0.817
+    - _Metallic: 1
     m_Colors:
-    - first:
-        name: _ClipPlane
-      second: {r: 0.9932594, g: -0.0000001192093, b: 0.11591329, a: -0.074673146}
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
+    - _ClipPlane: {r: 0, g: -1, b: 0, a: -0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}

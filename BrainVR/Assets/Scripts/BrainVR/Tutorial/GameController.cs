@@ -276,7 +276,7 @@ public class GameController : MonoBehaviour
     {
         //currentMode.text = "Current Axis"; // TOP FLOATING TEXT
         PlaneAxis = plane.GetAxis();
-        Debug.Log(phase);
+//        Debug.Log(phase);
         //anatomicalPlane.text = plane.CurrentAxis(); //subTOP Floating TEXT
         switch (phase)
         {
