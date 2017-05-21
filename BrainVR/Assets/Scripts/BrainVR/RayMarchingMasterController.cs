@@ -18,6 +18,36 @@ public struct RayMarchingOptions
     }
 }
 
+public struct SliceImageSet
+{
+    private Texture3D texture;
+    private double xScale;
+    private double yScale;
+    private double zScale;
+    private int imgXSize;
+    private int imgYSize;
+    private int imgZSize;
+
+    public Texture3D Texture { get { return texture; } }
+    public double XScale { get { return xScale; } }
+    public double YScale { get { return yScale; } }
+    public double ZScale { get { return zScale; } }
+    public int ImgXSize { get { return imgXSize; } }
+    public int ImgYSize { get { return imgYSize; } }
+    public int ImgZSize { get { return imgZSize; } }
+
+    public SliceImageSet(Texture3D texture, double xScale, double yScale, double zScale, int imgXSize, int imgYSize, int imgZSize)
+    {
+        this.texture = texture;
+        this.xScale = xScale;
+        this.yScale = yScale;
+        this.zScale = zScale;
+        this.imgXSize = imgXSize;
+        this.imgYSize = imgYSize;
+        this.imgZSize = imgZSize;
+    }
+}
+
 public class RayMarchingMasterController : MonoBehaviour
 {
     [Header("Importer")]
@@ -52,8 +82,8 @@ public class RayMarchingMasterController : MonoBehaviour
     private Material _compositeMaterial;
     private Camera _ppCamera;
     private Camera _uiCamera;
-    private List<Texture3D> _volumeBuffers = new List<Texture3D>();
-   
+    private List<SliceImageSet> sliceImageSets = new List<SliceImageSet>();
+
     private CubeRenderStyleController renderStyle;
 
     private void Awake()
@@ -71,7 +101,8 @@ public class RayMarchingMasterController : MonoBehaviour
     private IEnumerator LoadMRIImage()
     {
         yield return StartCoroutine(importer.Import(imageSetFolderPath));
-        _volumeBuffers = importer.ImportedTextures;
+        sliceImageSets = importer.ImportedSliceImageSets;
+        UpdateCubeScale();
         //_rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffers[selectedVolumeBufferIndex]);
     }
 
@@ -81,11 +112,11 @@ public class RayMarchingMasterController : MonoBehaviour
 
     private void OnDestroy()
     {
-        foreach (var volumeBuffer in _volumeBuffers)
+        foreach (var volumeBuffer in sliceImageSets)
         {
-            if (volumeBuffer != null)
+            if (volumeBuffer.Texture != null)
             {
-                Destroy(volumeBuffer);
+                Destroy(volumeBuffer.Texture);
             }
         }
     }
@@ -123,14 +154,36 @@ public class RayMarchingMasterController : MonoBehaviour
         }
     }
 
+    public void UpdateCubeScale()
+    {
+        var vrEnvironment = GameObject.FindWithTag("VREnvironment").GetComponent<VREnvironmentController>();
+        var cube = vrEnvironment.cubeObj;
+        var currentScale = cube.transform.localScale;
+
+        var currentImageSet = GetCurrentImageSet();
+        if (currentImageSet.HasValue)
+        {
+            var imgSet = currentImageSet.Value;
+
+            var oldXyzAverage = currentScale.x + currentScale.y + currentScale.z;
+            // var xyzSum = imgSet.XScale + imgSet.YScale + imgSet.ZScale;
+            var xyzSum = 3;
+
+            var coeff = oldXyzAverage / xyzSum;
+
+            /*cube.transform.localScale = new Vector3(
+                (float)(imgSet.XScale * coeff),
+                (float)(imgSet.YScale * coeff),
+                (float)(imgSet.ZScale * coeff)
+            );*/
+            cube.transform.localScale = new Vector3(coeff, coeff, coeff);
+        }
+    }
+
     public void RenderImage(RenderTexture source, RenderTexture destination, RayMarchingOptions options, Camera camera)
     {
-        Texture3D volumeTexture3D = null;
-        if (_volumeBuffers != null && _volumeBuffers.Count > 0)
-        {
-            volumeTexture3D = _volumeBuffers[renderStyle.SelectedVolumeBufferIndex % _volumeBuffers.Count];
-        }
-        _rayMarchMaterial.SetTexture("_VolumeTex", volumeTexture3D);
+        var curImgSet = GetCurrentImageSet();
+        _rayMarchMaterial.SetTexture("_VolumeTex", curImgSet.HasValue ? curImgSet.Value.Texture : null);
 
         var sourceWidth = source.width;
         var sourceHeight = source.height;
@@ -212,6 +265,17 @@ public class RayMarchingMasterController : MonoBehaviour
         RenderTexture.ReleaseTemporary(volumeTarget);
         RenderTexture.ReleaseTemporary(frontDepth);
         RenderTexture.ReleaseTemporary(backDepth);
+    }
+
+    public SliceImageSet? GetCurrentImageSet()
+    {
+        SliceImageSet? sliceImageSet = null;
+        if (sliceImageSets.Count > 0)
+        {
+            sliceImageSet = sliceImageSets[renderStyle.SelectedVolumeBufferIndex % sliceImageSets.Count];
+        }
+
+        return sliceImageSet;
     }
 
     private Vector4 GetPlaneVector()

@@ -9,18 +9,18 @@ public class MRIImporter : MonoBehaviour
 {
     public bool useBilinear = false;
 
-    private List<Texture3D> _result;
-    public List<Texture3D> ImportedTextures
-    {
-        get
-        {
-            return _result;
-        }
-    }
+    private List<SliceImageSet> _result;
+    public List<SliceImageSet> ImportedSliceImageSets { get { return _result; } }
 
     [Header("Drag all the textures in here")]
     [SerializeField]
     private List<Texture2D[]> slicesSets = new List<Texture2D[]>();
+    private List<double> xScaleList = new List<double>();
+    private List<double> yScaleList = new List<double>();
+    private List<double> zScaleList = new List<double>();
+    private List<int> xSizeList = new List<int>();
+    private List<int> ySizeList = new List<int>();
+    private List<int> zSizeList = new List<int>();
     private Texture2D[] currentLoadingSlices;
 
     public IEnumerator Import(string imageFolderPath)
@@ -73,7 +73,24 @@ public class MRIImporter : MonoBehaviour
                 SetProgressBar("Loading texture data... ", currentIndex, sliceCount);
             }
 
+            xSizeList.Add(currentLoadingSlices[0].width);
+            ySizeList.Add(currentLoadingSlices[0].height);
+            zSizeList.Add(currentLoadingSlices.Length);
             slicesSets.Add(currentLoadingSlices);
+
+            var configFileName = Path.Combine(subdirectory, "config.txt");
+            double x = 1, y = 1, z = 1;
+            if (File.Exists(configFileName))
+            {
+                var lines = File.ReadAllLines(configFileName);
+                x = double.Parse(lines[0]);
+                y = double.Parse(lines[1]);
+                z = double.Parse(lines[2]);
+            }
+
+            xScaleList.Add(x);
+            yScaleList.Add(y);
+            zScaleList.Add(z);
         }
 
         yield return null;
@@ -123,9 +140,10 @@ public class MRIImporter : MonoBehaviour
 
     private IEnumerator GenerateVolumeTexture()
     {
-        var textureList = new List<Texture3D>();
-        foreach (var slices in slicesSets)
+        var textureList = new List<SliceImageSet>();
+        for (var i = 0; i < slicesSets.Count; i++)
         {
+            var slices = slicesSets[i];
             // It should be the power of two. For w and h, they are already power of two values.
             int w = slices[0].width;
             int h = slices[0].height;
@@ -162,7 +180,7 @@ public class MRIImporter : MonoBehaviour
             tex.SetPixels(volumeColors);
             tex.Apply();
 
-            textureList.Add(tex);
+            textureList.Add(new SliceImageSet(tex, xScaleList[i], yScaleList[i], zScaleList[i], xSizeList[i], ySizeList[i], zSizeList[i]));
         }
 
         _result = textureList;

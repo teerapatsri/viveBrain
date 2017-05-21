@@ -10,7 +10,7 @@ public class CubeRenderStyleController : NetworkBehaviour
     [SyncVar]
     private bool _isTwoSideClipping = false;
 
-    [SyncVar]
+    [SyncVar(hook = "OnSelectedVolumeBufferIndexChange")]
     private int _selectedVolumeBufferIndex = 0;
 
     public int ShaderNumber { get { return _shaderNumber; } }
@@ -48,5 +48,12 @@ public class CubeRenderStyleController : NetworkBehaviour
     private void CmdSetSelectedVolumeBufferIndex(int newValue)
     {
         _selectedVolumeBufferIndex = newValue;
+    }
+
+    private void OnSelectedVolumeBufferIndexChange(int newSelectedVolumeBufferIndex)
+    {
+        GameObject obj = GameObject.FindWithTag("GameController");
+        var controller = obj.GetComponent<RayMarchingMasterController>();
+        controller.UpdateCubeScale();
     }
 }
