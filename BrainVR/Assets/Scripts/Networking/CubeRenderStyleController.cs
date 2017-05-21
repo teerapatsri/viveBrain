@@ -10,8 +10,12 @@ public class CubeRenderStyleController : NetworkBehaviour
     [SyncVar]
     private bool _isTwoSideClipping = false;
 
+    [SyncVar]
+    private int _selectedVolumeBufferIndex = 0;
+
     public int ShaderNumber { get { return _shaderNumber; } }
     public bool IsTwoSideClipping { get { return _isTwoSideClipping; } }
+    public int SelectedVolumeBufferIndex { get { return _selectedVolumeBufferIndex; } }
 
     public void SetShaderNumber(int value)
     {
@@ -21,6 +25,11 @@ public class CubeRenderStyleController : NetworkBehaviour
     public void SetTwoSideClipping(bool value)
     {
         CmdSetTwoSideClipping(value);
+    }
+
+    public void SetSelectedVolumeBufferIndex(int index)
+    {
+        CmdSetSelectedVolumeBufferIndex(index);
     }
 
     [Command]
@@ -33,5 +42,11 @@ public class CubeRenderStyleController : NetworkBehaviour
     private void CmdSetTwoSideClipping(bool newValue)
     {
         _isTwoSideClipping = newValue;
+    }
+
+    [Command]
+    private void CmdSetSelectedVolumeBufferIndex(int newValue)
+    {
+        _selectedVolumeBufferIndex = newValue;
     }
 }

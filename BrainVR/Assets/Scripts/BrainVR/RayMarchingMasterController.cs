@@ -53,7 +53,7 @@ public class RayMarchingMasterController : MonoBehaviour
     private Camera _ppCamera;
     private Camera _uiCamera;
     private List<Texture3D> _volumeBuffers = new List<Texture3D>();
-    private int selectedVolumeBufferIndex = 0;
+   
     private CubeRenderStyleController renderStyle;
 
     private void Awake()
@@ -72,18 +72,11 @@ public class RayMarchingMasterController : MonoBehaviour
     {
         yield return StartCoroutine(importer.Import(imageSetFolderPath));
         _volumeBuffers = importer.ImportedTextures;
-        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffers[selectedVolumeBufferIndex]);
+        //_rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffers[selectedVolumeBufferIndex]);
     }
 
     void Update()
     {
-        // TODO: Change to WandController later
-        if (Input.GetMouseButtonDown(0))
-        {
-            selectedVolumeBufferIndex = (selectedVolumeBufferIndex + 1) % _volumeBuffers.Count;
-            Debug.Log("Set volumnBufferIndex to: " + selectedVolumeBufferIndex);
-            _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffers[selectedVolumeBufferIndex]);
-        }
     }
 
     private void OnDestroy()
@@ -132,6 +125,13 @@ public class RayMarchingMasterController : MonoBehaviour
 
     public void RenderImage(RenderTexture source, RenderTexture destination, RayMarchingOptions options, Camera camera)
     {
+        Texture3D volumeTexture3D = null;
+        if (_volumeBuffers != null && _volumeBuffers.Count > 0)
+        {
+            volumeTexture3D = _volumeBuffers[renderStyle.SelectedVolumeBufferIndex % _volumeBuffers.Count];
+        }
+        _rayMarchMaterial.SetTexture("_VolumeTex", volumeTexture3D);
+
         var sourceWidth = source.width;
         var sourceHeight = source.height;
 

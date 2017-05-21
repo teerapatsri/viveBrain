@@ -26,7 +26,8 @@ public class WandController : MonoBehaviour
     [Tooltip("Radial Menu Spawner")]
     public RadialMenuSpawner spawner;
     public GameController gameController;
-
+    private GameObject cubeObj;
+    private CubeRenderStyleController renderStyle;
 
     private RadialMenu menuSpawned;
     private bool gripEnabled = true, trigEnabled = true, menuEnabled = true, padEnabled = true;
@@ -54,6 +55,8 @@ public class WandController : MonoBehaviour
         trackedObj = GetComponent<SteamVR_TrackedObject>();
         laser = GetComponent<SteamVR_LaserPointer>();
         audioSource = GetComponent<AudioSource>();
+        cubeObj = GameObject.Find("Cube");
+        renderStyle = cubeObj.GetComponent<CubeRenderStyleController>();
         if (laser != null)
         {
             laser.active = false;
@@ -78,6 +81,10 @@ public class WandController : MonoBehaviour
             if (CompareTag("RightWand"))
             {
                 rulerTrigger = true;
+            }
+            else if (CompareTag("LeftWand"))
+            {
+                renderStyle.SetSelectedVolumeBufferIndex(renderStyle.SelectedVolumeBufferIndex + 1);
             }
         }
         if (controller.GetPressUp(menuButton))
@@ -155,8 +162,6 @@ public class WandController : MonoBehaviour
         if (controller.GetPressDown(padButton) && padEnabled) //show menu and pressing menu
         {
             Debug.Log("Option: " + option);
-            GameObject cubeObj = GameObject.Find("Cube");
-            var renderStyle = cubeObj.GetComponent<CubeRenderStyleController>();
 
             //Spawn radial menu
             if (!showMenu && !otherWand.ShowingMenu() && menuSpawned == null)// no menu opened

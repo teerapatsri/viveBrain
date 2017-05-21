@@ -245,9 +245,9 @@ Shader "Hidden/Ray Marching/Ray Marching"
 			}
 			else {
 				if (src.a + 0.08 < 0.245588235294118 || src.a + 0.08 > 0.47843137254902) {
-					src.r = 0.00f;
+					/*src.r = 0.00f;
 					src.g = 0.00f;
-					src.b = 0.00f;
+					src.b = 0.00f;*/
 				}
 			}
 
