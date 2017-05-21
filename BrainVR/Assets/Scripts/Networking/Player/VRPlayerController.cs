@@ -10,6 +10,7 @@ public class VRPlayerController : NetworkBehaviour
     public GameObject laserBeamDisplay;
     public GameObject vrDisplayContainer;
     public GameObject playerDisplay;
+    public GameObject ruler;
 
     private VREnvironmentController vrEnvController;
     private Camera vrCamera;
@@ -24,7 +25,12 @@ public class VRPlayerController : NetworkBehaviour
 
     private GameObject leftWand;
     private GameObject rightWand;
+    private WandController rightWandController;
     private SteamVR_LaserPointer laserPointer;
+    private GameObject clipPlane;
+    private GameObject cubeTarget;
+    private RulerController rulerController;
+
 
     private void Awake()
     {
@@ -32,8 +38,13 @@ public class VRPlayerController : NetworkBehaviour
         vrCamera = vrEnvController.eyeCamera;
         leftWand = vrEnvController.leftWand;
         rightWand = vrEnvController.rightWand;
+        rightWandController = rightWand.GetComponent<WandController>();
         laserPointer = rightWand.GetComponent<SteamVR_LaserPointer>();
         cubeScaleTransformSynchronizer = GameObject.Find("Cube").GetComponent<CubeScaleTransformSynchronizer>();
+        //for ruler
+        clipPlane = GameObject.Find("Clipping Plane");
+        cubeTarget = GameObject.Find("Cube");
+        rulerController = ruler.GetComponent<RulerController>();
     }
 
     private bool isHost = false;
@@ -101,13 +112,62 @@ public class VRPlayerController : NetworkBehaviour
             vrEnvController.DisableVR();
         }
     }
-
+    private bool firstPointReceived = false;
     private void LateUpdate()
     {
         if (isLocalPlayer)
         {
             UpdateVRDisplay();
             UpdatePlayerDisplay();
+            if(rightWand.activeSelf)
+            {
+                Plane cutPlane = new Plane(clipPlane.transform.TransformPoint(Vector3.zero), clipPlane.transform.TransformPoint(Vector3.right), clipPlane.transform.TransformPoint(Vector3.forward));
+                Ray ray = new Ray(rightWand.transform.position, rightWand.transform.forward);
+                float rayDistance;
+                if (rightWandController.IsMeasuring())
+                {
+                    if (cutPlane.Raycast(ray, out rayDistance))
+                    {
+                        Vector3 localPoint = cubeTarget.transform.InverseTransformPoint(ray.GetPoint(rayDistance));
+                        Vector3 drawnPoint = ray.GetPoint(rayDistance);
+                        if (isOutOfBound(localPoint))
+                        {
+                            Debug.DrawLine(Vector3.zero, ray.GetPoint(rayDistance), Color.red, 0.5f);
+                            rulerController.UpdateCurrentPoint(ray.GetPoint(rayDistance));
+                        }
+                        else
+                        {
+                            Debug.DrawLine(Vector3.zero, ray.GetPoint(rayDistance), Color.green, 0.5f);
+
+                            if (!firstPointReceived)
+                            {
+                                rulerController.PinPoint(ray.GetPoint(rayDistance));
+                                firstPointReceived = true;
+                            }
+                            else
+                            {
+                                rulerController.UpdateCurrentPoint(ray.GetPoint(rayDistance));
+                            }
+                        }
+                    }
+                } else
+                {
+                    if (cutPlane.Raycast(ray, out rayDistance))
+                    {
+                        Vector3 localPoint = cubeTarget.transform.InverseTransformPoint(ray.GetPoint(rayDistance));
+                        Vector3 drawnPoint = ray.GetPoint(rayDistance);
+                        if (firstPointReceived)
+                        {
+                            rulerController.PinPoint(ray.GetPoint(rayDistance));
+                            firstPointReceived = false;
+                        }
+                        else
+                        {
+                            // don't draw
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -188,5 +248,10 @@ public class VRPlayerController : NetworkBehaviour
     private void OnLeftWandActiveChange(bool isActive)
     {
         if (!isLocalPlayer) leftHandDisplay.SetActive(isActive);
+    }
+
+    private bool isOutOfBound(Vector3 v)
+    {
+        return v.x < -0.5f || v.x > 0.5f || v.z < -0.5f || v.z > 0.5f || v.y < -0.5f || v.y > 0.5f;
     }
 }
