@@ -34,6 +34,7 @@ public class WandController : MonoBehaviour
     private bool grip;
     private bool showMenu;
     private bool controllingPlane;
+    private bool rulerTrigger;
     private float theta;
     private Vector2 prevAxis;
     private int option;
@@ -61,6 +62,7 @@ public class WandController : MonoBehaviour
         controllingPlane = false;
         grip = false;
         showMenu = false;
+        rulerTrigger = false;
     }
 
     // Update is called once per frame
@@ -73,13 +75,17 @@ public class WandController : MonoBehaviour
         }
         if (controller.GetPressDown(menuButton) && menuEnabled)
         {
-            /*
-            changeMode();
-            otherWand.changeMode();
-            */
+            if (CompareTag("RightWand"))
+            {
+                rulerTrigger = true;
+            }
         }
         if (controller.GetPressUp(menuButton))
         {
+            if (CompareTag("RightWand"))
+            {
+                rulerTrigger = false;
+            }
         }
         if (controller.GetPressDown(triggerButton) && trigEnabled)
         {
@@ -310,5 +316,9 @@ public class WandController : MonoBehaviour
         spawner.CloseMenu(menuSpawned);
         menuSpawned = null;
         showMenu = false;
+    }
+    public bool IsMeasuring()
+    {
+        return rulerTrigger;
     }
 }

@@ -1059,6 +1059,7 @@ MonoBehaviour:
   playerColorObj: {fileID: 1000011299907796}
   playerCamera: {fileID: 20000010706673138}
   ruler: {fileID: 1261801021274858}
+  rulerMarker: {fileID: 0}
 --- !u!114 &114003610204327964
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1085,6 +1086,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a82e213b7812346ed9c5783dc24b765c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  markerObject: {fileID: 0}
+  rulerShader: {fileID: 0}
 --- !u!114 &114114589411362528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1132,6 +1135,7 @@ MonoBehaviour:
   laserBeamDisplay: {fileID: 1883656231338920}
   vrDisplayContainer: {fileID: 1568584098057268}
   playerDisplay: {fileID: 1000011109169604}
+  ruler: {fileID: 1261801021274858}
 --- !u!114 &114772916717708960
 MonoBehaviour:
   m_ObjectHideFlags: 1
