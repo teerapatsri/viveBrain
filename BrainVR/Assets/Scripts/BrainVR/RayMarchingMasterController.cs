@@ -22,7 +22,7 @@ public class RayMarchingMasterController : MonoBehaviour
 {
     [Header("Importer")]
     public MRIImporter importer;
-    public string imageFolderPath = "";
+    public string imageSetFolderPath = "";
 
     [Header("Configurations")]
     public GameObject cubeTarget;
@@ -52,7 +52,8 @@ public class RayMarchingMasterController : MonoBehaviour
     private Material _compositeMaterial;
     private Camera _ppCamera;
     private Camera _uiCamera;
-    private Texture3D _volumeBuffer;
+    private List<Texture3D> _volumeBuffers = new List<Texture3D>();
+    private int selectedVolumeBufferIndex = 0;
     private CubeRenderStyleController renderStyle;
 
     private void Awake()
@@ -69,16 +70,30 @@ public class RayMarchingMasterController : MonoBehaviour
 
     private IEnumerator LoadMRIImage()
     {
-        yield return StartCoroutine(importer.Import(imageFolderPath));
-        _volumeBuffer = importer.ImportedTexture;
-        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
+        yield return StartCoroutine(importer.Import(imageSetFolderPath));
+        _volumeBuffers = importer.ImportedTextures;
+        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffers[selectedVolumeBufferIndex]);
+    }
+
+    void Update()
+    {
+        // TODO: Change to WandController later
+        if (Input.GetMouseButtonDown(0))
+        {
+            selectedVolumeBufferIndex = (selectedVolumeBufferIndex + 1) % _volumeBuffers.Count;
+            Debug.Log("Set volumnBufferIndex to: " + selectedVolumeBufferIndex);
+            _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffers[selectedVolumeBufferIndex]);
+        }
     }
 
     private void OnDestroy()
     {
-        if (_volumeBuffer != null)
+        foreach (var volumeBuffer in _volumeBuffers)
         {
-            Destroy(_volumeBuffer);
+            if (volumeBuffer != null)
+            {
+                Destroy(volumeBuffer);
+            }
         }
     }
 
@@ -117,8 +132,6 @@ public class RayMarchingMasterController : MonoBehaviour
 
     public void RenderImage(RenderTexture source, RenderTexture destination, RayMarchingOptions options, Camera camera)
     {
-        _rayMarchMaterial.SetTexture("_VolumeTex", _volumeBuffer);
-
         var sourceWidth = source.width;
         var sourceHeight = source.height;
 

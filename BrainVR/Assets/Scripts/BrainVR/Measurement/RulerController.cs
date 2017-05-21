@@ -29,7 +29,9 @@ public class RulerController : MonoBehaviour {
 	}
 
 	void DrawLengthIndicator () {
-		lengthIndicatorWrapper.transform.position = (secondPoint - firstPoint)/2 + firstPoint;
+        lengthIndicator.SetActive(true);
+
+        lengthIndicatorWrapper.transform.position = (secondPoint - firstPoint)/2 + firstPoint;
 		lengthIndicatorWrapper.transform.LookAt(secondPoint);
 		
 		// Scale
@@ -50,6 +52,7 @@ public class RulerController : MonoBehaviour {
 		lengthIndicatorRenderer = lengthIndicator.GetComponent<Renderer>();
 		lengthIndicatorRenderer.material.color = Color.green;
 		lengthIndicator.transform.parent = lengthIndicatorWrapper.transform;
+        lengthIndicator.SetActive(false);
 	}
 
 	public void PinPoint(Vector3 pinPoint)
@@ -69,8 +72,8 @@ public class RulerController : MonoBehaviour {
 			isPinSecondPoint = true;
 			secondPoint = pinPoint;
 		}
-		// DrawLine();
-		DrawLengthIndicator();
+        // DrawLine();
+            DrawLengthIndicator();
 		nPin = (nPin + 1) % 2;
 	}
 
