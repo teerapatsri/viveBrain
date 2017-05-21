@@ -52,6 +52,8 @@ public class CubeRenderStyleController : NetworkBehaviour
 
     private void OnSelectedVolumeBufferIndexChange(int newSelectedVolumeBufferIndex)
     {
+        _selectedVolumeBufferIndex = newSelectedVolumeBufferIndex;
+
         GameObject obj = GameObject.FindWithTag("GameController");
         var controller = obj.GetComponent<RayMarchingMasterController>();
         controller.UpdateCubeScale();
